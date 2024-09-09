@@ -13,7 +13,7 @@ plot_calibration_runs <- function(fungrouplist, prm.modify, run.dir){
   #loads functional group file
   fg.list <- fungrouplist %>%
     dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname) %>%
-    filter(!Code %in% c("DIN","DL"))
+    dplyr::filter(!Code %in% c("DIN","DL"))
 
   these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
 
@@ -56,7 +56,7 @@ plot_calibration_runs <- function(fungrouplist, prm.modify, run.dir){
 
         print(i)
 
-        pplot <-  ggplot2::ggplot(thisdataset, aes(x=Year,y=biomass, group = longname))+
+        pplot <-  ggplot2::ggplot(thisdataset, ggplot2::aes(x=Year,y=biomass, group = longname))+
           ggplot2::geom_line(colour="darkblue")+
           ggplot2::labs(y= thisvariabletype, x = "Year") +
           ggplot2::scale_y_continuous(limits = c(0,NA))+
@@ -87,15 +87,15 @@ plot_calibration_runs <- function(fungrouplist, prm.modify, run.dir){
 
       for (i in seq_len(n_pages)) {
         print(i)
-        try(pplot <-   ggplot2::ggplot(thisdataset, aes(x=Year,y=variable, group = age))+
-              ggplot2::geom_line(aes(colour= age))+
+        try(pplot <-   ggplot2::ggplot(thisdataset, ggplot2::aes(x=Year,y=variable, group = age))+
+              ggplot2::geom_line(ggplot2::aes(colour= age))+
               ggplot2::labs(y= thisvariabletype, x = "Year") +
               # facet_wrap(~longname, scales = "free")
               ggforce::facet_wrap_paginate(~longname, ncol = 3, nrow = 4, page = i, scales = "free")+
               ggplot2::theme(legend.position="none")+
               ggplot2::geom_hline(yintercept=1, linetype="solid", color = "black")+
               ggplot2::geom_hline(yintercept=0.5, linetype="dashed", color = "red")+
-              geom_hline(yintercept=1.5, linetype="dashed", color = "red"))
+              ggplot2::geom_hline(yintercept=1.5, linetype="dashed", color = "red"))
 
         thisplotname <- paste(thisvariabletype,i,"plot.pdf",sep="_")
 
@@ -107,9 +107,9 @@ plot_calibration_runs <- function(fungrouplist, prm.modify, run.dir){
       }  else if (thisvariabletype=="Nums" | thisvariabletype=="Wage"){
 
       thisdataset <- group.atlantis.data %>%
-        filter(!code %in% c("DIN","DL")) %>%
-        filter(variable_type==thisvariabletype) %>%
-        mutate(age = as.factor(age))
+        dplyr::filter(!code %in% c("DIN","DL")) %>%
+        dplyr::filter(variable_type==thisvariabletype) %>%
+        dplyr::mutate(age = as.factor(age))
 
       thisdataset <- group.atlantis.data[!group.atlantis.data$code%in%c("DIN","DL"),]
 
@@ -127,8 +127,8 @@ plot_calibration_runs <- function(fungrouplist, prm.modify, run.dir){
 
       for (i in seq_len(n_pages)) {
         print(i)
-        pplot <-   ggplot2::ggplot(thisdataset, aes(x=Year,y=variable, group = age))+
-          ggplot2::geom_line(aes(colour= age))+
+        pplot <-   ggplot2::ggplot(thisdataset, ggplot2::aes(x=Year,y=variable, group = age))+
+          ggplot2::geom_line(ggplot2::aes(colour= age))+
           ggplot2::labs(y= thisvariabletype, x = "Year") +
           # facet_wrap(~longname, scales = "free")
           ggforce::facet_wrap_paginate(~longname, ncol = 3, nrow = 4, page = i, scales = "free")+

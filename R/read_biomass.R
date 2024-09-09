@@ -28,8 +28,8 @@ read_biomass <- function(eachfolder, fg.list, folder.paths, these.runs, maxtimes
 
   print(head(this.output.biomass))
 
-  if(eachfolder==1) write_csv(this.output.biomass, paste0(run.dir,"/", biom.output.file,".csv"), append = FALSE)
-  if(eachfolder!=1) write_csv(this.output.biomass, paste0(run.dir,"/", biom.output.file,".csv"), append = TRUE)
+  if(eachfolder==1) readr::write_csv(this.output.biomass, paste0(run.dir,"/", biom.output.file,".csv"), append = FALSE)
+  if(eachfolder!=1) readr::write_csv(this.output.biomass, paste0(run.dir,"/", biom.output.file,".csv"), append = TRUE)
 
 
 }

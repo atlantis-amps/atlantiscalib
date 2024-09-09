@@ -35,7 +35,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       tidyr::pivot_longer(-Time, names_to = "Code", values_to = "mt") %>%
       dplyr::mutate(year = Time / 365) %>%
       dplyr::left_join(fg.list %>%
-                         select(Code, longname), by = "Code")
+                         dplyr::select(Code, longname), by = "Code")
 
     this.output.biomass.guild <- this.output.biomass %>%
       dplyr::rename(code=Code) %>%
@@ -69,7 +69,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     # plot all guilds including bacteria and detritus
     guild.plot <- biom_prop %>%
       ggplot2::ggplot()+
-      ggplot2::geom_bar(aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
+      ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
       ggplot2::scale_fill_manual(values = this_pal(length(unique(biom_prop$guild)))) +
       ggplot2::theme_bw() +
       ggplot2::labs(title = "Guild Biomass", x = "Year", y = "Proportion") +
@@ -86,7 +86,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     #plot without bacteria and detritus
     guild.plot2 <- biom_prop.bac %>%
       ggplot2::ggplot()+
-      ggplot2::geom_bar(aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
+      ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
       ggplot2::scale_fill_manual(values = this_pal(length(unique(biom_prop$guild)))) +
       ggplot2::theme_bw()+
       ggplot2::labs(title = "Guild Biomass no detritus or bacteria", x = "Year", y = "Proportion") +
@@ -114,12 +114,12 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
 
       guild.comp.plot <- this.guild %>%
         ggplot2::ggplot()+
-        ggplot2::geom_bar(aes(x=year, y=mt, fill=long_name), position='stack', stat='identity')+
+        ggplot2::geom_bar(ggplot2::aes(x=year, y=mt, fill=long_name), position='stack', stat='identity')+
         #   ggplot2::scale_fill_manual(values = this_pal(length(unique(biom_prop$guild)))) +
         ggplot2::theme_bw()+
         ggplot2::labs(title = paste("Guild Biomass",eachguild), x = "Year", y = "Proportion")+
         ggplot2::theme(legend.position = "bottom",
-                       plot.margin = margin(t = 1,  # Top margin
+                       plot.margin = ggplot2::margin(t = 1,  # Top margin
                                             r = 1,  # Right margin
                                             b = 3,  # Bottom margin
                                             l = 2,  # Left margin

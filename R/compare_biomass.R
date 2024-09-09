@@ -17,7 +17,7 @@ compare_biomass <- function(fungrouplist, prm.modify, run.dir, maxtimestep){
 
   folder.num <- 1:length(folder.paths)
 
-  biom.output.file <- paste0("biomass_compare_",paste0(as.character(runs.modify),collapse="-"))
+  biom.output.file <- paste0("biomass_compare_runs",paste0(as.character(runs.modify),collapse="-"))
  #run.names <- c("v6704", "v6708","v6716","v6716fp","v6717")
 
   run.colors <- c("#386cb0","#f0027f","#2cf3b8","#b01e28","#063970","#f38e2c","#5f0670","#fdc086")[1:length(these.runs)]
@@ -36,7 +36,7 @@ if(file.exists(paste0(run.dir,"/", biom.output.file,".csv"))==TRUE){
 
 fg.list <- fungrouplist %>%
   dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname) %>%
-  filter(!Code %in% c("DIN","DL"))
+  dplyr::filter(!Code %in% c("DIN","DL"))
 
 
 lapply(folder.num, read_biomass, fg.list, folder.paths, these.runs, maxtimestep)
@@ -46,7 +46,7 @@ plot_biomass(biom.output.file, run.colors, run.dir)
 
 print("Combining pdf comparison plots")
 pdf.list <- list.files(path=run.dir, pattern="compare.*\\.pdf$", full.names = TRUE)
-qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/",this.run,"_biomass_compare.pdf"))
+qpdf::pdf_combine(pdf.list, output = paste0("biomass_compare_runs_",paste0(as.character(runs.modify),collapse="-")))
 file.remove(pdf.list)
 
 

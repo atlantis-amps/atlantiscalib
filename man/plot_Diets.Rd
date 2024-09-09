@@ -5,13 +5,12 @@
 \title{Plot diets}
 \usage{
 plot_Diets(
-  dietsAll,
-  FG_to_plot,
+  fungrouplist,
+  prm.modify,
   threshold,
-  yearsselected,
-  grp_list,
-  atlantis_outputs,
-  startyear
+  timeselected,
+  starttime,
+  outdietfile
 )
 }
 \arguments{

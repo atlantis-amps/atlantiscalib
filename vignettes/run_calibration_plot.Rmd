@@ -95,7 +95,7 @@ Creates run directories based on Google sheet runs, and modifies the PRM file ba
 
 ```{r read prm changes, include=FALSE}
 
-lapply(runs.modify, modify_prm, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.nam)
+lapply(runs.modify, modify_prm, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.name)
 
 
 ```
