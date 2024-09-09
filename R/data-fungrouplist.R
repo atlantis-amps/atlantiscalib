@@ -1,20 +1,24 @@
 #' @title DATASET_TITLE
 #' @description DATASET_DESCRIPTION
-#' @format A data frame with 74 rows and 29 variables:
+#' @format A data frame with 79 rows and 33 variables:
 #' \describe{
 #'   \item{\code{Code}}{character COLUMN_DESCRIPTION}
 #'   \item{\code{Index}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{IsTurnedOn}}{integer COLUMN_DESCRIPTION}
-#'   \item{\code{name}}{character COLUMN_DESCRIPTION}
-#'   \item{\code{longname}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{Name}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{Long.Name}}{character COLUMN_DESCRIPTION}
 #'   \item{\code{NumCohorts}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NumGeneTypes}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NumStages}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NumSpawns}}{integer COLUMN_DESCRIPTION}
-#'   \item{\code{NumAgeClassSize}}{double COLUMN_DESCRIPTION}
+#'   \item{\code{NumAgeClassSize}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NumStocks}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{VerticallyMigrates}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{HorizontallyMigrates}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{NumMigrations}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{MultiYrMigrations}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{ExternalReproduction}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{RecruitType}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{IsFished}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{IsImpacted}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{isTAC}}{integer COLUMN_DESCRIPTION}
@@ -28,8 +32,8 @@
 #'   \item{\code{isCultured}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{isHabDepend}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{numMoveEntries}}{integer COLUMN_DESCRIPTION}
-#'   \item{\code{isSupplemented}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{isBioEroder}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{isSupplemented}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{isExternal}}{integer COLUMN_DESCRIPTION} 
 #'}
 #' @details DETAILS

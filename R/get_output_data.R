@@ -31,7 +31,7 @@ get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungroup
     vert.groups <- used.groups[used.groups$GroupType %in% c("FISH","SHARK","BIRD","MAMMAL"),]$name
 
     group.atlantis.data <- lapply(vert.groups, get_nc_data, thisncfile = nc, fungrouplist, runtime) %>%
-      bind_rows()
+      dplyr::bind_rows()
 
     readr::write_csv(group.atlantis.data, paste0(this.path,"/Nums_ResN_W_",this.run,".csv"))
 
