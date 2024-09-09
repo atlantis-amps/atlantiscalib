@@ -95,7 +95,7 @@ plot_Diets<-function(fungrouplist, prm.modify, runs.modify, threshold, outdietfi
 
   print("Combining pdf diet plots")
   pdf.list <- list.files(path=run.dir, pattern="dietplot.*\\.pdf$", full.names = TRUE)
-  qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/",this.run,"_diet_plots_", paste0(as.character(runs.modify),collapse="-"),".pdf"))
+  qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/",this.run,"_diet_plots_", ".pdf"))
   file.remove(pdf.list)
 
 }

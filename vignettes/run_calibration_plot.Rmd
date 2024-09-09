@@ -126,7 +126,7 @@ Extract biomass, numbers, ResN, StrN, and Weight-at-age for each functional grou
 #loads functional group file
 data(fungrouplist)
 
-get_output_data(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc)
+get_output_data(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc, maxtimestep)
 
 
 ```
@@ -147,5 +147,11 @@ compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep)
 Plot biomass by guild
 ```{r plot guild, include=FALSE}
 plot_guild_biomass(fungrouplist, prm.modify, group_guilds)
+```
+
+Plot diets
+```{r}
+plot_Diets(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
+
 ```
 

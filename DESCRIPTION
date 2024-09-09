@@ -21,6 +21,7 @@ Imports:
     qpdf,
     stringi,
     stringr,
+    tibble,
     tidyr
 Depends: 
     R (>= 2.10)

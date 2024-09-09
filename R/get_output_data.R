@@ -1,4 +1,18 @@
-get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc){
+#' Get output data from runs
+#'
+#' @param prm.modify
+#' @param runs.modify
+#' @param run.dir
+#' @param run.time
+#' @param fungrouplist
+#' @param this.output.nc
+#' @param maxtimestep
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc, maxtimestep){
 
   scenario.names <- prm.modify[prm.modify$run_no%in%runs.modify,]$run_name
 
@@ -30,7 +44,7 @@ get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungroup
     used.groups <- fungrouplist[fungrouplist$IsTurnedOn==1,]
     vert.groups <- used.groups[used.groups$GroupType %in% c("FISH","SHARK","BIRD","MAMMAL"),]$name
 
-    group.atlantis.data <- lapply(vert.groups, get_nc_data, thisncfile = nc, fungrouplist, runtime) %>%
+    group.atlantis.data <- lapply(vert.groups, get_nc_data, thisncfile = nc, fungrouplist, runtime, maxtimestep) %>%
       dplyr::bind_rows()
 
     readr::write_csv(group.atlantis.data, paste0(this.path,"/Nums_ResN_W_",this.run,".csv"))

@@ -4,7 +4,7 @@ load_output <- function(thisfolder, thisoutncfile, timeperiod) {
 
   # load west cost land for mapping
   coaststates <- rnaturalearth::ne_countries(continent="North America",returnclass = 'sf') %>%
-    filter(name %in% c('Canada','United States','Mexico'))
+    dplyr::filter(name %in% c('Canada','United States','Mexico'))
 
   atlantis_outputs[['coaststates']] <- coaststates
 

@@ -4,17 +4,18 @@
 #' @param thisncfile nc file
 #' @param fungrouplist functional group file
 #' @param runtime run length
+#' @param maxtimestep max time step
 #'
 #' @return thissp.data
 #' @export
 #'
 #' @examples
-get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime){
+get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep){
 
   print(paste("Analyzing this group",eachgroup))
 
   this.sprow <- fungrouplist %>%
-    filter(name==eachgroup)
+    dplyr::filter(name==eachgroup)
 
   print(this.sprow)
 
@@ -63,16 +64,16 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime){
         }
 
         thisData[thisData==0]<-NA  # Replace 0's with NA
-        thisData <- thisData[1:7,2:89,1:thistimestep]
+        thisData <- thisData[1:7,2:89,1:maxtimestep]
         thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
 
-        thisY <-tibble(variable=thisDataMeanMg/thisDataMeanMg[1]) %>%  # Normalize by initial value
-          mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
+        thisY <-tibble::tibble(variable=thisDataMeanMg/thisDataMeanMg[1]) %>%  # Normalize by initial value
+          dplyr::mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
 
         if(eachvarlist == "_Wage") {
 
-          thisY <-tibble(variable=thisDataMeanMg) %>%  # Normalize by initial value
-            mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
+          thisY <-tibble::tibble(variable=thisDataMeanMg) %>%  # Normalize by initial value
+            dplyr::mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
 
         }
 
@@ -91,11 +92,11 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime){
         thisData <- RNetCDF::var.get.nc(thisncfile, eachvariable)
         thisData[thisData==0]<-NA  # Replace 0's with NA
         print(dim(thisData))
-        thisData <- thisData[1:7,2:89,1:thistimestep]
+        thisData <- thisData[1:7,2:89,1:maxtimestep]
         #thisData <- thisData[1:7,2:89,1:51] #use this for 10 year runs
         thisDataNums<-apply(thisData,3,sum,na.rm = TRUE)#Get nums over time, summing over depth and location
-        thisY <-tibble(variable=thisDataNums) %>%  # Normalize by initial value
-          mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
+        thisY <- tibble::tibble(variable=thisDataNums) %>%  # Normalize by initial value
+          dplyr::mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
 
         var.listdata[[eachvariable]] <- thisY
 
