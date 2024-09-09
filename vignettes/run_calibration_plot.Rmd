@@ -51,7 +51,13 @@ outputfrequency <- 30 #output frequency in days
 maxtimestep <- 21
 this.output.nc <- "AMPS_OUT.nc" #name of output nc file
 
+#options for diet plots
+outdietfile <- "AMPS_OUTDietCheck.txt"
+
+threshold <- 0.2 #threshold for diet plots, will only show groups that correspond to this and higher proportion of the diet
+timeselected <- 21 #timestep selected for diet plots
 #End check these entries before running
+
 
 ```
 

@@ -1,9 +1,8 @@
-get_groups <- function(groups_csv, thisfolder){
+get_groups <- function(fungrouplist, this.path){
 
 grp_list <- list()
 
-  fgrps <- readr::read_csv(here::here(thisfolder,groups_csv)) %>%
-    dplyr::select(Code,IsTurnedOn,Name,`Long Name`,GroupType, IsPredator)
+  fgrps <- fungrouplist
 
   grp_list[['fgrps']] <- fgrps
 
@@ -32,13 +31,13 @@ grp_list <- list()
   # add to grps df
   grps <- fun_grps %>%
     dplyr::left_join(biomass_groups) %>%
-    filter(IsTurnedOn==1)
+    dplyr::filter(IsTurnedOn==1)
 
   grp_list[['grps']] <- grps
 
   pred_groups <- fgrps %>% dplyr::filter(!GroupType %in% c("SM_PHY","CARRION","LAB_DET","PL_BACT","SED_BACT","PHYTOBEN","SEAGRASS")) %>%
-    filter(IsTurnedOn==1 & IsPredator==1) %>%
-    dplyr::select(Name, Code, `Long Name`)
+    dplyr::filter(IsTurnedOn==1 & IsPredator==1) %>%
+    dplyr::select(name, Code, longname)
 
   grp_list[['pred_groups']] <- pred_groups
 

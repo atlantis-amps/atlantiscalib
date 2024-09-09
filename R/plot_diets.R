@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-plot_Diets<-function(fungrouplist, prm.modify, threshold, timeselected, starttime, outdietfile){
+plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, timeselected){
 
   #loads functional group file
   fg.list <- fungrouplist %>%
@@ -34,25 +34,22 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, timeselected, starttim
 
 
   diet_check <- read.table(paste0(this.path, "/",outdietfile), as.is = TRUE,header=TRUE,sep=" ")
-  tictoc::toc()
 
   #get group information
-  grp_list <-get_groups(groups_csv, thisfolder)
-
-  #load atlantis files
-  atlantis_outputs <- load_output(thisfolder, thisoutncfile, timeperiod)
-
+  grp_list <-get_groups(fungrouplist, this.path)
 
   pred_groups <- grp_list$pred_groups
-  tyrs <- atlantis_outputs$tyrs
+  pred.nums <- length(pred_groups$name)
 
-  if(timeselected=="all"){theseyears<-starttime+unique(dietsAll$Time)/timeperiod}
+  for(eachgroup in pred.nums){
 
-  FG_code<-pred_groups$Code[pred_groups$Name==FG_to_plot]
+    this.pred <- pred_groups$name[eachgroup]
+    FG_code<-pred_groups$Code[pred_groups$name==this.pred]
 
-  #print(FG_code)
-  subDiet<- dietsAll %>%
-    dplyr::filter(Predator==FG_code)
+    print(FG_code)
+    subDiet<- diet_check %>%
+      dplyr::filter(Predator==FG_code)
+
 
   #print(nrow(subDiet))
 
@@ -66,7 +63,9 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, timeselected, starttim
     thisdietdata <- subDiet %>%
       reshape2::melt(id.vars = c("Time", "Predator", "Cohort"), measure.vars=selec_prey)   %>%
       dplyr::mutate(variable = as.factor(variable)) %>%
-      dplyr::left_join(grp_list$fgrps, by = c("variable" = "Code"))
+      dplyr::left_join(grp_list$fgrps, by = c("variable" = "Code")) %>%
+      dplyr::select(Time, Predator, Cohort, variable, value, longname) %>%
+      dplyr::filter(Time%in%timeselected)
 
 
     dietplot <- thisdietdata %>%
@@ -76,7 +75,7 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, timeselected, starttim
       ggplot2::scale_fill_manual(values=getPalette(colourCount), name = "Prey")+
       ggplot2::scale_colour_manual(values=getPalette(colourCount),name = "Prey")+
       ggplot2::facet_wrap(~paste("Age",Cohort))+
-      ggplot2::labs(title= paste("Diet of ",pred_groups$`Long Name`[pred_groups$Name==FG_to_plot]),
+      ggplot2::labs(title= paste("Diet of ",pred_groups$`Long Name`[pred_groups$Name==this.pred]),
                     y="Diet proportions (%)", x = "Years",fill = "Prey",
                     color="Prey")+
       ggplot2::theme(legend.position='bottom')
@@ -85,7 +84,7 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, timeselected, starttim
   }else{
     dietplot <- ggplot2::ggplot() + ggplot2::annotate(geom="text", x = 4, y = 25, label = "plot could not be produced - check the diet output files") + theme_void()
   }
-  return(dietplot)
+  }
   #return("")
 
 }

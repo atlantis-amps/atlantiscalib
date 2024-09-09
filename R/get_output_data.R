@@ -16,10 +16,10 @@ get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungroup
 
     this.output.biomass <- readr::read_delim(paste0(this.path,"/AMPS_OUTBiomIndx.txt")) %>%
       dplyr::select(Time:DIN) %>%
-      gather(Code,biomass, -Time) %>%
-      left_join(fungrouplist, by="Code") %>%
-      filter(Time <= maxtimestep) %>%
-      mutate(Year = Time/365) %>%
+      tidyr::gather(Code,biomass, -Time) %>%
+      dplyr::left_join(fungrouplist, by="Code") %>%
+      dplyr::filter(Time <= maxtimestep) %>%
+      dplyr::mutate(Year = Time/365) %>%
       dplyr::select(Code, biomass, Index, name, longname, Year)
 
     readr::write_csv(this.output.biomass, paste0(this.path,"/biomass_",this.run,".csv"))
