@@ -4,15 +4,37 @@
 #' @param FG_to_plot
 #' @param threshold
 #' @param yearsselected
-#' @param grp_list
-#' @param atlantis_outputs
 #' @param startyear
 #'
 #' @return dietplot
 #' @export
 #'
 #' @examples
-plot_Diets<-function(dietsAll, FG_to_plot, threshold, yearsselected, startyear){
+plot_Diets<-function(fungrouplist, prm.modify, threshold, timeselected, starttime, outdietfile){
+
+  #loads functional group file
+  fg.list <- fungrouplist %>%
+    dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname) %>%
+    filter(!Code %in% c("DIN","DL"))
+
+  these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
+
+  folder.paths <- paste0(run.dir,"/",these.runs,"/outputFolder")
+
+  folder.num <- 1:length(folder.paths)
+
+  for(eachnum in folder.num){
+
+    this.run <- these.runs[eachnum]
+    this.path <- folder.paths[eachnum]
+
+    print(this.path)
+    #needed in case the file is going to be overwritten
+    system(paste0("sudo chmod -R a+rwx ", this.path), wait = TRUE)
+
+
+  diet_check <- read.table(paste0(this.path, "/",outdietfile), as.is = TRUE,header=TRUE,sep=" ")
+  tictoc::toc()
 
   #get group information
   grp_list <-get_groups(groups_csv, thisfolder)
@@ -24,7 +46,7 @@ plot_Diets<-function(dietsAll, FG_to_plot, threshold, yearsselected, startyear){
   pred_groups <- grp_list$pred_groups
   tyrs <- atlantis_outputs$tyrs
 
-  if(yearsselected=="all"){theseyears<-startyear+unique(dietsAll$Time)/timeperiod}
+  if(timeselected=="all"){theseyears<-starttime+unique(dietsAll$Time)/timeperiod}
 
   FG_code<-pred_groups$Code[pred_groups$Name==FG_to_plot]
 
@@ -48,8 +70,8 @@ plot_Diets<-function(dietsAll, FG_to_plot, threshold, yearsselected, startyear){
 
 
     dietplot <- thisdietdata %>%
-      dplyr::filter(Time%in%as.character(c((theseyears-startyear)*timeperiod))) %>%
-      ggplot2::ggplot(ggplot2::aes(x=startyear+(Time/timeperiod),y=value*100,fill=`Long Name`, color=`Long Name`))+
+      dplyr::filter(Time%in%as.character(c((theseyears-starttime)*timeperiod))) %>%
+      ggplot2::ggplot(ggplot2::aes(x=starttime+(Time/timeperiod),y=value*100,fill=`Long Name`, color=`Long Name`))+
       ggplot2::geom_area(stat="identity")+
       ggplot2::scale_fill_manual(values=getPalette(colourCount), name = "Prey")+
       ggplot2::scale_colour_manual(values=getPalette(colourCount),name = "Prey")+

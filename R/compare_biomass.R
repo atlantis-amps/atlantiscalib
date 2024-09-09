@@ -43,4 +43,11 @@ lapply(folder.num, read_biomass, fg.list, folder.paths, these.runs, maxtimestep)
 
 plot_biomass(biom.output.file, run.colors, run.dir)
 
+
+print("Combining pdf comparison plots")
+pdf.list <- list.files(path=run.dir, pattern="compare.*\\.pdf$", full.names = TRUE)
+qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/",this.run,"_biomass_compare.pdf"))
+file.remove(pdf.list)
+
+
 }

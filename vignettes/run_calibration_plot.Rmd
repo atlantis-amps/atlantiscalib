@@ -1,0 +1,144 @@
+---
+title: "Run and plot AMPS calibration"
+author: "Hem Nalini Morzaria-Luna"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE)
+#turn off scientific notation so numbers with decimals are printed
+options(scipen = 999)
+
+#only packages that are needed as loaded, functions from other packages are called directly as dplyr::filter
+# List of packages for session
+.packages = c("parallel","doSNOW")
+install.packages(.packages, dependencies = TRUE)
+# Load packages into session 
+lapply(.packages, require, character.only=TRUE)
+
+
+devtools::load_all()
+```
+
+
+Check these entries before running
+```{r set run, include=FALSE}
+
+#Check before running
+#Name of sheet used in Google sheet calibration log
+sheet.name = "calibration_log_example"
+
+#runs that will be modified, based on run_no in the spreadsheet
+runs.modify <- 1:2
+
+#specify email used to access the Google sheet
+myemail <- "hmorzarialuna@gmail.com"#"myemail@gmail.com"
+
+#directory with base run
+base.dir <- "/home/atlantis/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2"
+#directory where to store runs
+run.dir <- "/nfsdata/ampscalibration"
+#name of biology prm
+prm.name <- "AMPSbioparam_mv1_2024_V4.prm"
+
+sh.file <- "amps_cal.sh" #original sh file
+
+startyear <- 2011 #model start year
+runtime <- 30 #length of runs in days
+outputfrequency <- 30 #output frequency in days
+#set maxtimestep to the maximum number of days you want to plot in comparison files
+maxtimestep <- 21
+this.output.nc <- "AMPS_OUT.nc" #name of output nc file
+
+#End check these entries before running
+
+```
+
+Authenticate Google so we can write to Google sheets
+```{r authenticate, include=FALSE}
+
+#if getting a Error in `gs4_get_impl_()`:
+#! Client error: (400) FAILED_PRECONDITION
+#make sure you are reading a google docs and not an .xlsx file
+
+
+# Authenticate manually
+#will open window, should be logged in browser with same account used to access the Google sheet
+googlesheets4::gs4_auth()
+
+# Set authentication token to be stored in a folder called `.secrets`
+options(gargle_oauth_cache = ".secrets")
+
+# If successful, the previous step stores a token file.
+# Check that a file has been created with:
+list.files(".secrets/")
+
+#Authenticate using token. If no browser opens, the authentication works.
+googlesheets4::gs4_auth(cache = ".secrets", email = myemail)
+
+
+```
+
+Load Google sheet with calibration changes
+```{r get googlesheet, include=FALSE}
+#Calibration Google sheet id (from browser bar)
+sheet.id = "1KskR_Jzs33C_1zhSNwAPNCOliM9q6ftD7DSywSYW568"
+
+prm.modify <- googlesheets4::read_sheet(sheet.id, sheet = sheet.name)
+
+```
+
+## Modify PRM
+
+Creates run directories based on Google sheet runs, and modifies the PRM file based on the Google sheet prm.modify
+
+```{r read prm changes, include=FALSE}
+
+lapply(runs.modify, modify_prm, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.nam)
+
+
+```
+
+
+
+Manage Atlantis runs, will run the specified directories pulled from column "run_name" in the Google sheet
+
+```{r manage runs, include=FALSE}
+
+
+manage_atlantis_runs(sh.file, runs.modify, prm.modify, run.dir)
+
+
+```
+
+
+Extract biomass, numbers, ResN, StrN, and Weight-at-age for each functional group by run output, variables will be saved in each output folder
+```{r get outputs, include=FALSE}
+
+#loads functional group file
+data(fungrouplist)
+
+get_output_data(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc)
+
+
+```
+
+Plot calibration results by run, a combined pdf with plots for biomass, reserve N, structural N, numbers and weight-at-age will be saved in the output folder
+```{r plot runs, include=FALSE}
+
+plot_calibration_runs(fungrouplist, prm.modify, run.dir)
+
+```
+
+Plot biomass comparison plots for all runs
+```{r compare biomass, include=FALSE}
+compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep)
+
+```
+
+Plot biomass by guild
+```{r plot guild, include=FALSE}
+plot_guild_biomass(fungrouplist, prm.modify, group_guilds)
+```
+
