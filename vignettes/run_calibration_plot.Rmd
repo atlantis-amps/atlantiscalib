@@ -150,7 +150,7 @@ plot_guild_biomass(fungrouplist, prm.modify, group_guilds)
 ```
 
 Plot diets
-```{r}
+```{r plot diets, include=FALSE}
 plot_Diets(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
 
 ```

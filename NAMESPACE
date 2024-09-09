@@ -3,6 +3,7 @@
 export("%>%")
 export(compare_biomass)
 export(get_nc_data)
+export(get_output_data)
 export(manage_atlantis_runs)
 export(modify_prm)
 export(plot_Diets)
