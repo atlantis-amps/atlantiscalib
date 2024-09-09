@@ -7,10 +7,12 @@
 plot_Diets(
   fungrouplist,
   prm.modify,
+  runs.modify,
   threshold,
-  timeselected,
-  starttime,
-  outdietfile
+  outdietfile,
+  starttimediet,
+  endtimediet,
+  run.dir
 )
 }
 \arguments{

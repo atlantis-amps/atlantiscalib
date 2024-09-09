@@ -46,7 +46,7 @@ plot_biomass(biom.output.file, run.colors, run.dir)
 
 print("Combining pdf comparison plots")
 pdf.list <- list.files(path=run.dir, pattern="compare.*\\.pdf$", full.names = TRUE)
-qpdf::pdf_combine(pdf.list, output = paste0("biomass_compare_runs_",paste0(as.character(runs.modify),collapse="-")))
+qpdf::pdf_combine(pdf.list, output = paste0("biomass_compare_runs_",paste0(as.character(runs.modify),collapse="-"),".pdf"))
 file.remove(pdf.list)
 
 

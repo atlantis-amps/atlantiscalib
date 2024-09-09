@@ -10,12 +10,12 @@
 #' @export
 #'
 #' @examples
-plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, starttimediet, endtimediet){
+plot_Diets<-function(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir){
 
   #loads functional group file
   fg.list <- fungrouplist %>%
     dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname) %>%
-    filter(!Code %in% c("DIN","DL"))
+    dplyr::filter(!Code %in% c("DIN","DL"))
 
   these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
 
@@ -39,12 +39,13 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, starttime
   grp_list <-get_groups(fungrouplist, this.path)
 
   pred_groups <- grp_list$pred_groups
-  pred.nums <- length(pred_groups$name)
+  pred.nums <- 1:length(pred_groups$name)
 
   for(eachgroup in pred.nums){
 
     this.pred <- pred_groups$name[eachgroup]
     FG_code<-pred_groups$Code[pred_groups$name==this.pred]
+    this.longname<-pred_groups$longname[pred_groups$name==this.pred]
 
     print(FG_code)
     subDiet<- diet_check %>%
@@ -69,23 +70,33 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, starttime
 
 
     dietplot <- thisdietdata %>%
-      dplyr::filter(Time%in%as.character(c((theseyears-starttime)*timeperiod))) %>%
-      ggplot2::ggplot(ggplot2::aes(x=starttime+(Time/timeperiod),y=value*100,fill=`Long Name`, color=`Long Name`))+
+      #dplyr::mutate(time = as.factor(Time)) %>%
+      ggplot2::ggplot(ggplot2::aes(x=Time,y=value*100,fill=`longname`, color=`longname`))+
       ggplot2::geom_area(stat="identity")+
       ggplot2::scale_fill_manual(values=getPalette(colourCount), name = "Prey")+
       ggplot2::scale_colour_manual(values=getPalette(colourCount),name = "Prey")+
       ggplot2::facet_wrap(~paste("Age",Cohort))+
-      ggplot2::labs(title= paste("Diet of ",pred_groups$`Long Name`[pred_groups$Name==this.pred]),
+      ggplot2::labs(title= paste("Diet of ",this.longname),
                     y="Diet proportions (%)", x = "Years",fill = "Prey",
                     color="Prey")+
       ggplot2::theme(legend.position='bottom')
 
     #return(dietplot)
-  }else{
-    dietplot <- ggplot2::ggplot() + ggplot2::annotate(geom="text", x = 4, y = 25, label = "plot could not be produced - check the diet output files") + theme_void()
+
+    thisplotname <- paste(this.run,this.longname,"dietplot.pdf",sep="_")
+
+    # ggsave(thisplotname,plot = pplot, device = "png", width = 10, height = 6)
+    ggplot2::ggsave(thisplotname, plot = dietplot, path=run.dir, width = 21, height = 29, units = "cm")
+
   }
+
   }
   #return("")
+
+  print("Combining pdf diet plots")
+  pdf.list <- list.files(path=run.dir, pattern="dietplot.*\\.pdf$", full.names = TRUE)
+  qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/",this.run,"_diet_plots_", paste0(as.character(runs.modify),collapse="-"),".pdf"))
+  file.remove(pdf.list)
 
 }
 }
