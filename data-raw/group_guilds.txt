@@ -1,0 +1,80 @@
+code,index,name,long_name,group_type,guild
+BB,0,Sed_Bact,Benthic bacteria,SED_BACT,Bacteria
+PB,1,Pelag_Bact,Pelagic bacteria,PL_BACT,Bacteria
+PL,2,Lrg_Phyto,Large phytoplankton,LG_PHY,Primary producers
+PS,3,Sm_Phyto,Small phytoplankton,SM_PHY,Primary producers
+MA,4,Macroalgae,Macroalgae,PHYTOBEN,Primary producers
+SG,5,Seagrass,Seagrass,SEAGRASS,Primary producers
+ZS,6,Micro_Zoo,Microzooplankton,SM_ZOO,Zooplankton
+ZM,7,Meso_Zoo,Mesozooplankton,SM_ZOO,Zooplankton
+ZL,8,Lrg_Zoo,Large zooplankton,LG_ZOO,Zooplankton
+ZG,9,Gel_Zoo,Gelatinous zooplankton,LG_ZOO,Zooplankton
+SQX,10,Squid,Squid,LG_ZOO,Zooplankton
+BMD,11,Macrobenth_Deep,Deep macro-zoobenthos,MOB_EP_OTHER,Invertebrates
+BD,12,Deposit_Feeder,Deposit feeders,SED_EP_FF,Invertebrates
+BG,13,Benthic_grazer,Benthic grazers,MOB_EP_OTHER,Invertebrates
+BMS,14,Octopi,Octopi,MOB_EP_OTHER,Invertebrates
+DUN,15,Dungeness,Dungeness crab,MOB_EP_OTHER,Invertebrates
+BML,16,Crab,Crabs,MOB_EP_OTHER,Invertebrates
+PWN,17,Shrimp,Shrimp,PWN,Invertebrates
+BFF,18,Filter_Other,Benthic filter feeder,SED_EP_FF,Invertebrates
+BIV,19,Bivalve,Bivalves,SED_EP_FF,Invertebrates
+GEC,20,Geoduck,Geoducks,SED_EP_FF,Invertebrates
+BC,21,Carn_Infauna,Carnivorous infauna,MOB_EP_OTHER,Invertebrates
+HEP,22,Herring_PS,Pacific Herring Puget Sound,FISH,Pelagic fish
+HEC,23,Herring_Cherry,Pacific Herring Cherry Point,FISH,Pelagic fish
+FPS,24,Sm_Plank_Fish,Small Planktivorous Fish,FISH,Pelagic fish
+POP,25,Perch_Fish,Perch,FISH,Pelagic fish
+CHY,26,ChinookY_Fish,Chinook Hatch Yearling,FISH,Salmon
+CHS,27,ChinookSY_Fish,Chinook Hatch Subyearling,FISH,Salmon
+CSY,28,ChinookSKY_Fish,Chinook Skagit Yearling,FISH,Salmon
+CSS,29,ChinookSKSY_Fish,Chinook Skagit Subyearling,FISH,Salmon
+CSN,30,ChinookSSY_Fish,Chinook Snohomish Subyearling,FISH,Salmon
+CDS,31,ChinookDSY_Fish,Chinook Duwamish Subyearling,FISH,Salmon
+CNY,32,ChinookNY_Fish,Chinook Nisqually Yearling,FISH,Salmon
+CNS,33,ChinookNSY_Fish,Chinook Nisqually Subyearling,FISH,Salmon
+CHC,34,ChinookHY_Fish,Chinook Hood Canal Subyearling,FISH,Salmon
+CYE,35,ChinookOY_Fish,Chinook other Yearling,FISH,Salmon
+CKS,36,ChinookOSY_Fish,Chinook other Subyearling,FISH,Salmon
+COH,37,CohoHY_Fish,Coho Hatch Yearling,FISH,Salmon
+COS,38,CohoSY_Fish,Coho Skagit Yearling,FISH,Salmon
+COD,39,CohoDSY_Fish,Coho Deep South Yearling,FISH,Salmon
+COY,40,CohoOY_Fish,Coho other Yearling,FISH,Salmon
+CMS,41,ChumHSY_Fish,Chum Hatch Subyearling,FISH,Salmon
+CMF,42,ChumFSY_Fish,Chum Fall Subyearling,FISH,Salmon
+CMH,43,ChumHCSY_Fish,Chum Hood Canal summer run Subyearling,FISH,Salmon
+PIS,44,PinkSY_Fish,Pink Salmon Subyearling,FISH,Salmon
+SAL,45,OtherSal_Fish,Other salmonids,FISH,Salmon
+SAF,46,SGeorgia_Fish,Strait of Georgia salmonids,FISH,Salmon
+FMM,47,Gadiods_Fish,Hake_Large gadoids,FISH,Demersal fish
+FVS,48,LgDem_Fish,Large demersal predators,FISH,Demersal fish
+ROC,49,DemRock_Fish,Demersal rockfish,FISH,Demersal fish
+MRO,50,MidRock_Fish,Midwater rockfish,FISH,Demersal fish
+DVR,51,DemVRock_Fish,Demersal vulnerable rockfish,FISH,Demersal fish
+MVR,52,MidVRock_Fish,Midwater vulnerable rockfish,FISH,Demersal fish
+SMD,53,SmDem_Fish,Small demersal fish,FISH,Demersal fish
+FDF,54,SmFlat_Fish,Small-mouthed Flatfish,FISH,Demersal fish
+HAP,55,PiscFlat_Fish,Piscivorous flatfish,FISH,Demersal fish
+DOG,56,Spinydog_Fish,Spiny dogfish,SHARK,Elasmobranchs
+SBL,57,Sixgill_Shark,Sixgill Shark,SHARK,Elasmobranchs
+SSK,58,SkateRay,Skates,SHARK,Elasmobranchs
+RAT,59,Ratfish,Ratfish,FISH,Elasmobranchs
+SB,60,Pisc_Seabird,Seabirds (piscivorous),BIRD,Sea birds
+SP,61,NonPisc_Seabird,Seabirds (mainly non-piscivorous),BIRD,Sea birds
+BE,62,Raptors,Raptors,BIRD,Sea birds
+HSL,63,Harbor_seal,Harbor seals,MAMMAL,Marine mammals
+CSL,64,California_sea_lion,California sea lions,MAMMAL,Marine mammals
+PIN,65,Pinniped,Steller sea lions,MAMMAL,Marine mammals
+PHR,66,Porpoise,Harbor porpoise,MAMMAL,Marine mammals
+ROR,67,Res_Orca,Resident Orca,MAMMAL,Marine mammals
+TOR,68,Trans_Orca,Transient Orca,MAMMAL,Marine mammals
+HUW,69,Hump_whale,Humpback whales,MAMMAL,Marine mammals
+DL,70,Lab_Det,Labile detritus,LAB_DET,Detritus
+DR,71,Ref_Det,Refractory detritus,REF_DET,Detritus
+DC,72,Carrion,Carrion,CARRION,Detritus
+CRH,73,ChinookResH_Fish,Chinook resident Hood canal, FISH,Salmon
+CRC,74,ChinookResN_Fish,Chinook resident North Puget Sound, FISH,Salmon
+CRW,75,ChinookResW_Fish,Chinook resident central south Puget Sound, FISH,Salmon
+COR,76,CohoRes_Fish, Coho resident Puget Sound wide, FISH,Salmon
+CDR,77,CohoResD_Fish,Coho resident Deep South Yearling, FISH,Salmon
+AUR,9,Aurelia,Aurelia jellyfish,LG_ZOO,Zooplankton
