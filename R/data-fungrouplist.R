@@ -5,8 +5,8 @@
 #'   \item{\code{Code}}{character COLUMN_DESCRIPTION}
 #'   \item{\code{Index}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{IsTurnedOn}}{integer COLUMN_DESCRIPTION}
-#'   \item{\code{Name}}{character COLUMN_DESCRIPTION}
-#'   \item{\code{Long.Name}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{name}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{longname}}{character COLUMN_DESCRIPTION}
 #'   \item{\code{NumCohorts}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NumGeneTypes}}{integer COLUMN_DESCRIPTION}
 #'   \item{\code{NumStages}}{integer COLUMN_DESCRIPTION}

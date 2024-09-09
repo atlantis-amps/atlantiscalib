@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, timeselected){
+plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, starttimediet, endtimediet){
 
   #loads functional group file
   fg.list <- fungrouplist %>%
@@ -65,7 +65,7 @@ plot_Diets<-function(fungrouplist, prm.modify, threshold, outdietfile, timeselec
       dplyr::mutate(variable = as.factor(variable)) %>%
       dplyr::left_join(grp_list$fgrps, by = c("variable" = "Code")) %>%
       dplyr::select(Time, Predator, Cohort, variable, value, longname) %>%
-      dplyr::filter(Time%in%timeselected)
+      dplyr::filter(Time>starttimediet & Time <endtimediet)
 
 
     dietplot <- thisdietdata %>%

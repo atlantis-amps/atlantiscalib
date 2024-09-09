@@ -55,7 +55,8 @@ this.output.nc <- "AMPS_OUT.nc" #name of output nc file
 outdietfile <- "AMPS_OUTDietCheck.txt"
 
 threshold <- 0.2 #threshold for diet plots, will only show groups that correspond to this and higher proportion of the diet
-timeselected <- 21 #timestep selected for diet plots
+starttimediet <- 0 #minimum timestep selected for diet plots, it will show data from this point
+endtimediet <- 21 #maximum timestep selected for diet plots, it will show data up this point
 #End check these entries before running
 
 
