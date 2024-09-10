@@ -140,7 +140,7 @@ plot_calibration_runs(fungrouplist, prm.modify, run.dir)
 
 Plot biomass comparison plots for all runs
 ```{r compare biomass, include=FALSE}
-compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep)
+compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify)
 
 ```
 

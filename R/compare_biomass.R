@@ -4,12 +4,13 @@
 #' @param prm.modify list of runs to compare
 #' @param run.dir directory where runs are stored
 #' @param maxtimestep maximum desired timestep
+#' @param runs.modify runs to compare
 #'
 #' @return
 #' @export
 #'
 #' @examples
-compare_biomass <- function(fungrouplist, prm.modify, run.dir, maxtimestep){
+compare_biomass <- function(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify){
 
   these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
 
@@ -29,10 +30,10 @@ compare_biomass <- function(fungrouplist, prm.modify, run.dir, maxtimestep){
 names(run.colors) <- these.runs
 
 
-if(file.exists(paste0(run.dir,"/", biom.output.file,".csv"))==TRUE){
-
-  file.remove(paste0(run.dir,"/", biom.output.file,".csv"))
-}
+# if(file.exists(paste0(run.dir,"/", biom.output.file,".csv"))==TRUE){
+#
+#   file.remove(paste0(run.dir,"/", biom.output.file,".csv"))
+# }
 
 fg.list <- fungrouplist %>%
   dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname) %>%
