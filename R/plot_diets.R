@@ -71,15 +71,18 @@ plot_Diets<-function(fungrouplist, prm.modify, runs.modify, threshold, outdietfi
 
     dietplot <- thisdietdata %>%
       #dplyr::mutate(time = as.factor(Time)) %>%
-      ggplot2::ggplot(ggplot2::aes(x=Time,y=value*100,fill=`longname`, color=`longname`))+
+      ggplot2::ggplot(ggplot2::aes(x=Time,y=value*100, fill=`longname`, color=`longname`))+
       ggplot2::geom_area(stat="identity")+
-      ggplot2::scale_fill_manual(values=getPalette(colourCount), name = "Prey")+
-      ggplot2::scale_colour_manual(values=getPalette(colourCount),name = "Prey")+
+      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values=getPalette(colourCount), name = "Prey")+
+      ggplot2::scale_colour_manual(values=getPalette(colourCount), name = "Prey")+
       ggplot2::facet_wrap(~paste("Age",Cohort))+
       ggplot2::labs(title= paste("Diet of ",this.longname),
                     y="Diet proportions (%)", x = "Years",fill = "Prey",
                     color="Prey")+
-      ggplot2::theme(legend.position='bottom')
+      ggplot2::theme(legend.position='bottom') +
+      #ggplot2::theme(legend.justification = c(0.8,0.8)) +
+      ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE)))+
+      ggplot2::guides(color = "none")
 
     #return(dietplot)
 
