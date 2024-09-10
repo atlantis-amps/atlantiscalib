@@ -64,7 +64,8 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
 
 
     # make palette
-    this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(guild.list), "Paired"))
+   # this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(guild.list), "Paired"))
+    this_pal <- pals::kelly(n=length(guild.list))
 
     # plot all guilds including bacteria and detritus
     guild.plot <- biom_prop %>%
@@ -81,7 +82,8 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     ggplot2::ggsave(thisplotname, plot = guild.plot, path = run.dir, width = 19, height = 25, units = "cm")
 
 
-    this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(guild.list.nobac), "Paired"))
+    #this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(guild.list.nobac), "Paired"))
+    this_pal <- pals::kelly(n=length(guild.list.nobac))
 
     #plot without bacteria and detritus
     guild.plot2 <- biom_prop.bac %>%
@@ -112,6 +114,9 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
 
       this.guild <- this.guild.nobac[this.guild.nobac$guild == eachguild,]
 
+
+      this_pal <- pals::kelly(n=nrow(this.guild))
+
       this.guild.prop <- this.guild %>%
         dplyr::group_by(year, guild) %>%
         dplyr::summarise(mt_guild = sum(mt)) %>%
@@ -122,7 +127,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       guild.comp.plot <- this.guild.prop %>%
         ggplot2::ggplot()+
         ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=long_name), position='stack', stat='identity')+
-        #   ggplot2::scale_fill_manual(values = this_pal(length(unique(biom_prop$guild)))) +
+        ggplot2::scale_fill_manual(values = this_pal) +
         ggplot2::theme_bw()+
         ggplot2::labs(title = paste("Guild Biomass",eachguild), x = "Year", y = "Proportion of total guild biomass")+
         ggplot2::theme(legend.position = "bottom",

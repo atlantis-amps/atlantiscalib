@@ -13,7 +13,7 @@ options(scipen = 999)
 #only packages that are needed as loaded, functions from other packages are called directly as dplyr::filter
 # List of packages for session
 .packages = c("parallel","doSNOW")
-install.packages(.packages, dependencies = TRUE)
+#install.packages(.packages, dependencies = TRUE)
 # Load packages into session 
 lapply(.packages, require, character.only=TRUE)
 

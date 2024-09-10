@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-read_biomass <- function(eachfolder, fg.list, folder.paths, these.runs, maxtimestep){
+read_biomass <- function(eachfolder, fg.list, folder.paths, these.runs, maxtimestep, biom.output.file){
 
   this.folder <- folder.paths[eachfolder]
   this.run <- these.runs[eachfolder]
