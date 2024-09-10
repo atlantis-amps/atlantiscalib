@@ -71,7 +71,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     guild.plot <- biom_prop %>%
       ggplot2::ggplot()+
       ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
-      ggplot2::scale_fill_manual(values = this_pal(length(unique(biom_prop$guild)))) +
+      ggplot2::scale_fill_manual(values = this_pal) +
       ggplot2::theme_bw() +
       ggplot2::labs(title = "Guild Biomass", x = "Year", y = "Proportion of total system biomass") +
       ggplot2::theme(legend.position = "bottom")
@@ -89,7 +89,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     guild.plot2 <- biom_prop.bac %>%
       ggplot2::ggplot()+
       ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
-      ggplot2::scale_fill_manual(values = this_pal(length(unique(biom_prop$guild)))) +
+      ggplot2::scale_fill_manual(values = this_pal) +
       ggplot2::theme_bw()+
       ggplot2::labs(title = "Guild Biomass no detritus or bacteria", x = "Year", y = "Proportion of total system biomass") +
       ggplot2::theme(legend.position = "bottom")
@@ -115,7 +115,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       this.guild <- this.guild.nobac[this.guild.nobac$guild == eachguild,]
 
 
-      this_pal <- pals::kelly(n=nrow(this.guild))
+      this_pal <- pals::kelly(n=nrow(length(unique(this.guild$longname))))
 
       this.guild.prop <- this.guild %>%
         dplyr::group_by(year, guild) %>%
