@@ -71,10 +71,11 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     guild.plot <- biom_prop %>%
       ggplot2::ggplot()+
       ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
-      ggplot2::scale_fill_manual(values = this_pal) +
+      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values = this_pal) +
       ggplot2::theme_bw() +
       ggplot2::labs(title = "Guild Biomass", x = "Year", y = "Proportion of total system biomass") +
-      ggplot2::theme(legend.position = "bottom")
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE)))
 
     thisplotname <- paste(this.run, "Allguild_plot1.pdf",sep="_")
 
@@ -89,10 +90,11 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
     guild.plot2 <- biom_prop.bac %>%
       ggplot2::ggplot()+
       ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
-      ggplot2::scale_fill_manual(values = this_pal) +
+      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values = this_pal) +
       ggplot2::theme_bw()+
       ggplot2::labs(title = "Guild Biomass no detritus or bacteria", x = "Year", y = "Proportion of total system biomass") +
-      ggplot2::theme(legend.position = "bottom")
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE)))
 
 
     thisplotname2 <- paste(this.run, "Allguild_plot2.pdf",sep="_")
@@ -127,7 +129,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       guild.comp.plot <- this.guild.prop %>%
         ggplot2::ggplot()+
         ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=long_name), position='stack', stat='identity')+
-        ggplot2::scale_fill_manual(values = this_pal) +
+        ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values = this_pal, values = this_pal) +
         ggplot2::theme_bw()+
         ggplot2::labs(title = paste("Guild Biomass",eachguild), x = "Year", y = "Proportion of total guild biomass")+
         ggplot2::theme(legend.position = "bottom",
@@ -136,13 +138,10 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
                                             b = 3,  # Bottom margin
                                             l = 2,  # Left margin
                                             unit = "cm")) +
-        guides(fill=guide_legend(title="Functional group"))
+        guides(fill=guide_legend(title="Functional group")) +
+        #ggplot2::theme(legend.justification = c(0.8,0.8)) +
+        ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE)))
 
-      if(eachguildnum==3 | eachguildnum==5 | eachguildnum==6){
-
-        guild.comp.plot <- guild.comp.plot  +
-          ggplot2::theme(legend.position = "right") #end ggplot
-      }
 
       #add 2 to guild counter to avoid overwriting other combined guild plots
       guild.counter <- eachguildnum + 2
