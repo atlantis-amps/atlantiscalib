@@ -4,7 +4,14 @@
 \alias{read_biomass}
 \title{Read biomass}
 \usage{
-read_biomass(eachfolder, fg.list, folder.paths, these.runs, maxtimestep)
+read_biomass(
+  eachfolder,
+  fg.list,
+  folder.paths,
+  these.runs,
+  maxtimestep,
+  biom.output.file
+)
 }
 \arguments{
 \item{eachfolder}{folder number}

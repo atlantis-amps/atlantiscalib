@@ -14,15 +14,23 @@ Imports:
     data.table,
     doSNOW,
     dplyr,
+    foreach,
     future,
     ggforce,
+    ggplot2,
     googlesheets4,
+    here,
     pals,
     parallel,
     qpdf,
+    RColorBrewer,
+    readr,
+    reshape2,
+    RNetCDF,
     stringi,
     stringr,
     tibble,
+    tidync,
     tidyr
 Depends: 
     R (>= 2.10)

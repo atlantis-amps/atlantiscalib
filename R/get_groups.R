@@ -1,3 +1,12 @@
+#' Get group types
+#'
+#' @param fungrouplist
+#' @param this.path
+#'
+#' @return
+#' @export
+#'
+#' @examples
 get_groups <- function(fungrouplist, this.path){
 
 grp_list <- list()
