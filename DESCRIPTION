@@ -17,6 +17,7 @@ Imports:
     future,
     ggforce,
     googlesheets4,
+    pals,
     parallel,
     qpdf,
     stringi,
