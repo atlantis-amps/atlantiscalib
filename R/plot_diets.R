@@ -20,7 +20,8 @@ plot_Diets<-function(fungrouplist, prm.modify, runs.modify, threshold, outdietfi
   these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
 
   folder.paths <- paste0(run.dir,"/",these.runs,"/outputFolder")
-
+print(paste("Analyze these runs"))
+print(these.runs)
   folder.num <- 1:length(folder.paths)
 
   for(eachnum in folder.num){
@@ -32,7 +33,7 @@ plot_Diets<-function(fungrouplist, prm.modify, runs.modify, threshold, outdietfi
     #needed in case the file is going to be overwritten
     system(paste0("sudo chmod -R a+rwx ", this.path), wait = TRUE)
 
-
+print("read diet check")
   diet_check <- read.table(paste0(this.path, "/",outdietfile), as.is = TRUE,header=TRUE,sep=" ")
 
   #get group information
@@ -66,18 +67,20 @@ plot_Diets<-function(fungrouplist, prm.modify, runs.modify, threshold, outdietfi
       dplyr::mutate(variable = as.factor(variable)) %>%
       dplyr::left_join(grp_list$fgrps, by = c("variable" = "Code")) %>%
       dplyr::select(Time, Predator, Cohort, variable, value, longname) %>%
-      dplyr::filter(Time>starttimediet & Time <endtimediet)
+      dplyr::filter(Time>starttimediet & Time <endtimediet) %>%
+      dplyr::mutate(year = Time / 365)
+
 
 
     dietplot <- thisdietdata %>%
       #dplyr::mutate(time = as.factor(Time)) %>%
-      ggplot2::ggplot(ggplot2::aes(x=Time,y=value*100, fill=`longname`, color=`longname`))+
+      ggplot2::ggplot(ggplot2::aes(x=year,y=value*100, fill=`longname`, color=`longname`))+
       ggplot2::geom_area(stat="identity")+
       ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values=getPalette(colourCount), name = "Prey")+
       ggplot2::scale_colour_manual(values=getPalette(colourCount), name = "Prey")+
       ggplot2::facet_wrap(~paste("Age",Cohort))+
       ggplot2::labs(title= paste("Diet of ",this.longname),
-                    y="Diet proportions (%)", x = "Years",fill = "Prey",
+                    y="Diet proportions (%)", x = "Year",fill = "Prey",
                     color="Prey")+
       ggplot2::theme(legend.position='bottom') +
       #ggplot2::theme(legend.justification = c(0.8,0.8)) +

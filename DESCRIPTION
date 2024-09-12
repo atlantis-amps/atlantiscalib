@@ -18,20 +18,28 @@ Imports:
     future,
     ggforce,
     ggplot2,
+    ggh4x,
     googlesheets4,
     here,
+    kableExtra,
     pals,
     parallel,
+    patchwork,
     qpdf,
+    maps,
+    mapdata,
     RColorBrewer,
     readr,
     reshape2,
+    rbgm,
     RNetCDF,
+    sf,
     stringi,
     stringr,
     tibble,
     tidync,
-    tidyr
+    tidyr,
+    viridis
 Depends: 
     R (>= 2.10)
 LazyData: true

@@ -63,8 +63,9 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep
           variable.type = "Wage"
         }
 
+        print(dim(thisData))
         thisData[thisData==0]<-NA  # Replace 0's with NA
-        thisData <- thisData[1:7,2:89,1:maxtimestep]
+        thisData <- thisData[1:7,2:89,1:(maxtimestep/outputfrequency)]
         thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
 
         thisY <-tibble::tibble(variable=thisDataMeanMg/thisDataMeanMg[1]) %>%  # Normalize by initial value
@@ -92,7 +93,8 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep
         thisData <- RNetCDF::var.get.nc(thisncfile, eachvariable)
         thisData[thisData==0]<-NA  # Replace 0's with NA
         print(dim(thisData))
-        thisData <- thisData[1:7,2:89,1:maxtimestep]
+        thisData <- thisData[1:7,2:89,1:(maxtimestep/outputfrequency)]
+        thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mea]
         #thisData <- thisData[1:7,2:89,1:51] #use this for 10 year runs
         thisDataNums<-apply(thisData,3,sum,na.rm = TRUE)#Get nums over time, summing over depth and location
         thisY <- tibble::tibble(variable=thisDataNums) %>%  # Normalize by initial value

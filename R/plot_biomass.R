@@ -23,7 +23,7 @@ plot_biomass <- function(biom.output.file, run.colors, run.dir){
 
     print(i)
 
-    pplot <-   thisdataset %>%
+    pplot <- thisdataset %>%
       dplyr::mutate(run_name = as.factor(run_name)) %>%
       ggplot2::ggplot(ggplot2::aes(x=Year,y=biomass, group = run_name, colour = run_name, linetype=run_name))+
       ggplot2::geom_line(alpha = 0.8)+
