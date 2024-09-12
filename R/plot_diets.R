@@ -76,7 +76,7 @@ print("read diet check")
       #dplyr::mutate(time = as.factor(Time)) %>%
       ggplot2::ggplot(ggplot2::aes(x=year,y=value*100, fill=`longname`, color=`longname`))+
       ggplot2::geom_area(stat="identity")+
-      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 10), values=getPalette(colourCount), name = "Prey")+
+      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values=getPalette(colourCount), name = "Prey")+
       ggplot2::scale_colour_manual(values=getPalette(colourCount), name = "Prey")+
       ggplot2::facet_wrap(~paste("Age",Cohort))+
       ggplot2::labs(title= paste("Diet of ",this.longname),
@@ -92,7 +92,7 @@ print("read diet check")
     thisplotname <- paste(this.run,this.longname,"dietplot.pdf",sep="_")
 
     # ggsave(thisplotname,plot = pplot, device = "png", width = 10, height = 6)
-    ggplot2::ggsave(thisplotname, plot = dietplot, path=run.dir, width = 10, height = 6, units = "cm")
+    ggplot2::ggsave(thisplotname, plot = dietplot, path=run.dir, width = 21, height = 29, units = "cm")
 
   }
 
