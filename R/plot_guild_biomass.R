@@ -41,6 +41,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       dplyr::rename(code=Code) %>%
       dplyr::left_join(group_guilds, by = "code")
 
+
     # calc
     biom_prop <- this.output.biomass.guild %>%
       dplyr::group_by(year, guild) %>%
@@ -49,6 +50,7 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       dplyr::mutate(mt_tot = sum(mt_guild)) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(prop = mt_guild / mt_tot)
+
 
     biom_prop.bac <- this.output.biomass.guild %>%
       dplyr::filter(!guild %in% c("Bacteria", "Detritus")) %>%
@@ -65,38 +67,39 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
 
     # make palette
    # this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(guild.list), "Paired"))
-    this_pal <- pals::glasbey(n=length(guild.list))
+    this_pal <- pals::glasbey
+
+   # colourCount = length(guild.list)
+  #  getPalette = grDevices::colorRampPalette(RColorBrewer::brewer.pal(colourCount, "Set1"))
 
     # plot all guilds including bacteria and detritus
-    guild.plot <- biom_prop %>%
+    guild.plot1 <- biom_prop %>%
       ggplot2::ggplot()+
-      ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
-      ggplot2::theme_bw() +
+      ggplot2::geom_bar(ggplot2::aes(x=as.factor(year), y=prop, fill=guild), position='stack', stat='identity')+
+      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values=this_pal(length(unique(biom_prop$guild))))+
+      ggplot2::theme_bw()+
       ggplot2::labs(title = "Guild Biomass", x = "Year", y = "Proportion of total system biomass") +
       ggplot2::theme(legend.position = "bottom") +
-      ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE))) +
-      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values = this_pal)
-
+      ggplot2::guides(col = ggplot2::guide_legend(nrow = 8, theme = ggplot2::theme(legend.byrow = TRUE)))
 
     thisplotname <- paste(this.run, "Allguild_plot1.pdf",sep="_")
 
     #ggsave(thisplotname,plot = pplot, device = "png", width = 10, height = 6)
-    ggplot2::ggsave(thisplotname, plot = guild.plot, path = run.dir, width = 19, height = 25, units = "cm")
+    ggplot2::ggsave(thisplotname, plot = guild.plot1, path = run.dir, width = 19, height = 25, units = "cm")
 
 
     #this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(guild.list.nobac), "Paired"))
-    this_pal <- pals::glasbey(n=length(guild.list.nobac))
+    #this_pal <- pals::glasbey(n=length(guild.list.nobac))
 
-
-    #plot without bacteria and detritus
+      #plot without bacteria and detritus
     guild.plot2 <- biom_prop.bac %>%
       ggplot2::ggplot()+
-      ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=guild), position='stack', stat='identity')+
+      ggplot2::geom_bar(ggplot2::aes(x=as.factor(year), y=prop, fill=guild), position='stack', stat='identity')+
+      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values=this_pal(length(unique(biom_prop.bac$guild))))+
       ggplot2::theme_bw()+
       ggplot2::labs(title = "Guild Biomass no detritus or bacteria", x = "Year", y = "Proportion of total system biomass") +
       ggplot2::theme(legend.position = "bottom") +
-      ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE))) +
-      ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values = this_pal)
+      ggplot2::guides(col = ggplot2::guide_legend(nrow = 8, theme = ggplot2::theme(legend.byrow = TRUE)))
 
 
     thisplotname2 <- paste(this.run, "Allguild_plot2.pdf",sep="_")
@@ -119,7 +122,10 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
       this.guild <- this.guild.nobac[this.guild.nobac$guild == eachguild,]
 
 
-      this_pal <- pals::glasbey(n=length(unique(this.guild$longname)))
+
+      # this_pal <- pals::alphabet(n=length(unique(this.guild$longname)))
+      # print(this_pal)
+      # names(this_pal) <- unique(this.guild$longname)
 
       #this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(length(unique(this.guild$longname)), "Paired"))
 
@@ -131,22 +137,14 @@ plot_guild_biomass<- function(fungrouplist, prm.modify, group_guilds){
         dplyr::mutate(prop = mt / mt_guild)
 
       guild.comp.plot <- this.guild.prop %>%
-        ggplot2::ggplot() +
-        ggplot2::geom_bar(ggplot2::aes(x=year, y=prop, fill=long_name), position='stack', stat='identity') +
-        ggplot2::theme_bw() +
-        ggplot2::labs(title = paste("Guild Biomass",eachguild), x = "Year", y = "Proportion of total guild biomass") +
-        ggplot2::theme(legend.position = "bottom",
-                       plot.margin = ggplot2::margin(t = 2,  # Top margin
-                                            r = 2,  # Right margin
-                                            b = 3,  # Bottom margin
-                                            l = 2,  # Left margin
-                                            unit = "cm")) +
-        ggplot2::guides(fill=ggplot2::guide_legend(title="Functional group")) +
-        #ggplot2::theme(legend.justification = c(0.8,0.8)) +
-        ggplot2::guides(col = ggplot2::guide_legend(nrow = 6, theme = ggplot2::theme(legend.byrow = TRUE))) +
-        ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values = this_pal)
+        ggplot2::ggplot()+
+        ggplot2::geom_bar(ggplot2::aes(x=as.factor(year), y=prop, fill=longname), position='stack', stat='identity')+
+        ggplot2::scale_fill_manual(labels = ~ stringr::str_wrap(.x, width = 20), values=this_pal(length(unique(this.guild.prop$longname))), name = "Functional group")+
+        ggplot2::theme_bw()+
+        ggplot2::labs(title = paste0("Guild Biomass for ", eachguild), x = "Year", y = "Proportion of total system biomass") +
+        ggplot2::theme(legend.position = "bottom") +
+        ggplot2::guides(col = ggplot2::guide_legend(nrow = 8, theme = ggplot2::theme(legend.byrow = TRUE)))
 
-      #add 2 to guild counter to avoid overwriting other combined guild plots
       guild.counter <- eachguildnum + 2
 
       thisplotname3 <- paste0(this.run, "_",eachguild, "_guild_plot",guild.counter,".pdf")

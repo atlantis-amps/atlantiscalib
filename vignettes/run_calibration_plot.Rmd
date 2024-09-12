@@ -22,7 +22,7 @@ devtools::load_all()
 ```
 
 
-Check these entries before running
+Check these entries before running, specifies runs, paths and plots to generate
 ```{r set run, include=FALSE}
 
 #Check before running
@@ -61,6 +61,12 @@ starttimediet <- 0 #minimum timestep selected for diet plots, it will show data 
 endtimediet <- 3650 #maximum timestep selected for diet plots, it will show data up this point
 #End check these entries before running
 
+#plots to run, if these flags are turned off, this RMD will only create run folders, run them and gather output
+runbaseplots <- 1 #baseplots are Biomass, ResN, StrN, Numbers, Weight-at-age for individual runs
+runcomparebiomass <- 1 #compare biomass plots
+runguildbiomass <- 1 #guild biomass plots
+rundietplots <- 1 #diet plots showing diet composition across run
+rundietcomparison <- 0 #diet comparison plots
 
 ```
 
@@ -136,29 +142,33 @@ get_output_data(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.o
 Plot calibration results by run, a combined pdf with plots for biomass, reserve N, structural N, numbers and weight-at-age will be saved in the output folder
 ```{r plot runs, include=FALSE}
 
-plot_calibration_runs(fungrouplist, prm.modify, run.dir)
+if(runbaseplots == 1) plot_calibration_runs(fungrouplist, prm.modify, run.dir)
 
 ```
 
 Plot biomass comparison plots for all runs
 ```{r compare biomass, include=FALSE}
-compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify)
+
+if(runcomparebiomass == 1) compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify)
 
 ```
 
 Plot biomass by guild
 ```{r plot guild, include=FALSE}
-plot_guild_biomass(fungrouplist, prm.modify, group_guilds)
+
+if(runguildbiomass == 1) plot_guild_biomass(fungrouplist, prm.modify, group_guilds)
 ```
 
 Plot diets
 ```{r plot diets, include=FALSE}
-plot_Diets(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
+
+if(rundietplots == 1) plot_Diets(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
 
 ```
 
 Plot diet comparison
 ```{r plot diet comparison, include=FALSE}
 
+if(rundietcomparison == 1) plot_DietComparison(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
 
 ```
