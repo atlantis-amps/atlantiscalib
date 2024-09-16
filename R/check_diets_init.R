@@ -7,13 +7,13 @@
 #' @param fungrouplist
 #' @param atlantis.bgm
 #' @param prm.name
-#' @param this.nc
+#' @param init_file
 #'
 #' @return
 #' @export
 #'
 #' @examples
-check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atlantis.bgm, prm.name, this.nc){
+check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atlantis.bgm, prm.name, init_file){
 
   # Code to explore Atlantis diet interactions from biol.prm and init.nc
   # Conceptually similar to Javier's ReactiveAtlantis code, but more detail
@@ -64,18 +64,16 @@ check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atl
     system(paste0("sudo chmod -R a+rwx ", this.path), wait = TRUE)
 
     # age at maturity info
-    agemat <- read.table(paste0(this.path,"/age_mat.txt"))
-    agemat <- agemat %>% mutate(species = substr(V1, 1, 3)) %>% rename(agemat = V2) %>% dplyr::select(species, agemat)
-
-  }
+    agemat <- read.table(here::here("data-raw/age_mat.txt"))
+    agemat <- agemat %>% dplyr::mutate(species = substr(V1, 1, 3)) %>% dplyr::rename(agemat = V2) %>% dplyr::select(species, agemat)
 
 
 # prm of run to look at
-bio_prm <- readLines(prm.name)
+bio_prm <- readLines(paste0("data-raw/",prm.name))
 # init.nc of run to look at
-init_file <-
-init <- tidync(init_file)
-init_nc <- ncdf4::nc_open(init_file)
+
+init <- tidync::tidync(paste0("data-raw/", init_file))
+init_nc <- ncdf4::nc_open(paste0("data-raw/",init_file))
 
 # Turn PRM and INIT to data frames  ---------------------------------------
 # turn pprey matrix to a data frame to work with
@@ -160,9 +158,9 @@ for(i in 1:length(fg)){
     s_tmp <- trimws(bio_prm[s_vec_lines[j]], which  = "right")
 
     if(this_fg %in% verts){
-      s_mat <- matrix(as.numeric(unlist(str_split(s_tmp, " "))), nrow = 1)
+      s_mat <- matrix(as.numeric(unlist(stringr::str_split(s_tmp, " "))), nrow = 1)
     } else {
-      s_mat <- matrix(as.numeric(unlist(str_split(s_tmp, "   "))), nrow = 1) # inverts now are separated by 3 spaces
+      s_mat <- matrix(as.numeric(unlist(stringr::str_split(s_tmp, "   "))), nrow = 1) # inverts now are separated by 3 spaces
     }
 
     s_df_tmp <- data.frame(s_mat) %>% `colnames<-`(0:88)
@@ -172,7 +170,7 @@ for(i in 1:length(fg)){
 
   # add columns for stage and season
   s_df <- s_df %>%
-    mutate(species = this_fg,
+    dplyr::mutate(species = this_fg,
            stage = ifelse(grepl("juv", name),
                           "juvenile",
                           "adult"),
@@ -216,7 +214,7 @@ for(i in 1:length(fg)){
   # read names and values
   v_df <- data.frame()
   for(j in 1:length(v_lines)){
-    v_mat <- matrix(as.numeric(unlist(str_split(bio_prm[v_vec_lines[j]], "   "))), nrow = 1)
+    v_mat <- matrix(as.numeric(unlist(stringr::str_split(bio_prm[v_vec_lines[j]], "   "))), nrow = 1)
     v_mat <- matrix(v_mat[,1:6],nrow=1)
     v_df_tmp <- data.frame(v_mat) %>% `colnames<-`(6:1) # 1 is the surface here
     v_df_tmp <- cbind("name" = names(v_lines[j]), v_df_tmp)
@@ -225,7 +223,7 @@ for(i in 1:length(fg)){
 
   # add columns for stage and day/night
   v_df <- v_df %>%
-    mutate(species = this_fg,
+    dplyr::mutate(species = this_fg,
            stage = ifelse(grepl("1", name),
                           "juvenile",
                           "adult"),
@@ -264,7 +262,7 @@ for(i in 1:length(fg)){
   # read names and values
   g_df <- data.frame()
   for(j in 1:length(g_lines)){
-    this_g_line <- unlist(str_split(bio_prm[g_lines[j]], "   "))
+    this_g_line <- unlist(stringr::str_split(bio_prm[g_lines[j]], "   "))
     this_g_name <- this_g_line[1]
     this_g_val <- as.numeric(this_g_line[2])
     g_df_tmp <- data.frame("name" = this_g_name, "g" = this_g_val)
@@ -288,9 +286,9 @@ for(i in 1:length(fg)){
 # diet_from_init("CMS")
 
 # apply function
-purrr::map(verts, possibly(diet_from_init,NA))
-
+#purrr::map(verts, purrr::possibly(diet_from_init,NA, run.dir, this.run, pprey_mat))
+lapply(verts, diet_from_init, run.dir, this.run, pprey_mat)
 # test_verts <- c("DVR","FDF","HAP","MRO","MVR","POP","RAT","SB","SP")
 # purrr::map(test_verts, possibly(diet_from_init,NA))
-
+}
 }

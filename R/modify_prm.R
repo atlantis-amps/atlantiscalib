@@ -14,6 +14,7 @@
 #' @examples
 modify_prm <- function(eachrun, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.name){
 
+  print(eachrun)
 #run that will be created
 row.modify <- prm.modify %>%
   dplyr::filter(run_no %in% eachrun)
@@ -43,16 +44,23 @@ biology.prm <- readLines(paste0(dir.modify,"/",prm.name))
 
 #first change parameters that are not vectors
 
-if(row.modify$is_vector==0){
+row.num <- 1:nrow(row.modify)
 
-  print(row.modify)
+for(thisrow in row.num) {
+
+  print(thisrow)
+  eachrow <- row.modify[thisrow,]
+
+if(eachrow$is_vector==0){
+
+  print(eachrow)
 
   #get full line for parameter
-  this.nonvec.line <- biology.prm[grep(paste0("^",row.modify$parameter_name),biology.prm)]
+  this.nonvec.line <- biology.prm[grep(paste0("^",eachrow$parameter_name),biology.prm)]
   if(grepl("\\t",this.nonvec.line)) this.nonvec.line <- gsub("\\t","   ", this.nonvec.line)
   print(this.nonvec.line)
   #find line number of the parameter
-  line.num <- grep(paste0("^",row.modify$parameter_name),biology.prm)
+  line.num <- grep(paste0("^",eachrow$parameter_name),biology.prm)
 
   this.num.line <- this.nonvec.line %>%
     stringr::str_split(.,"   ") %>%
@@ -60,27 +68,27 @@ if(row.modify$is_vector==0){
     as.numeric
 
   #add existing and new prm parameter values
-  row.modify$original_prm <- this.num.line[!is.na(this.num.line)]
+  eachrow$original_prm <- this.num.line[!is.na(this.num.line)]
 
-  row.modify$new_prm <- row.modify$original_prm * row.modify$scaler
+  eachrow$new_prm <- eachrow$original_prm * eachrow$scaler
 
-  print(row.modify)
+  print(eachrow)
   #write to googlesheet
-  googlesheets4::range_write(sheet.id, data = row.modify, range = paste0("A",eachrun+1), col_names = FALSE)
+  googlesheets4::range_write(sheet.id, data = eachrow, range = paste0("A",(eachrow$index+1)), col_names = FALSE, sheet = sheet.name)
 
-  biology.prm[line.num] <- paste(row.modify$parameter_name,row.modify$new_prm, sep = "   ")
+  biology.prm[line.num] <- paste(eachrow$parameter_name,eachrow$new_prm, sep = "   ")
 }
 
 
 # change parameters that are vectors
-if(row.modify$is_vector==1){
+if(eachrow$is_vector==1){
 
   #get full line for parameter
-  this.salm.line <- biology.prm[grep(paste0("^",row.modify$parameter_name," "),biology.prm)]
+  this.salm.line <- biology.prm[grep(paste0("^",eachrow$parameter_name," "),biology.prm)]
   if(grepl("\\t",this.salm.line)) this.salm.line <- gsub("\\t","   ", this.salm.line)
   print(this.salm.line)
   #find line number of the parameter
-  line.num <- grep(paste0("^",row.modify$parameter_name),biology.prm)
+  line.num <- grep(paste0("^",eachrow$parameter_name),biology.prm)
 
   #read line where vector is located
   this.vec.line <- biology.prm[line.num+1]
@@ -110,17 +118,17 @@ this.num.line <- this.vec.line %>%
     unlist %>%
     as.numeric
 
-  new.param <- this.num.line*row.modify$scaler
+  new.param <- this.num.line*eachrow$scaler
 
    biology.prm[vec.line] <- paste0(new.param, collapse = "   ")
 
   #convert parameters to text for record keeping
   #write to googlesheet
-  row.modify$original_prm <- paste(as.character(this.num.line), collapse=" ")
-  row.modify$new_prm <- paste(as.character(new.param), collapse=" ")
-  print(row.modify)
+  eachrow$original_prm <- paste(as.character(this.num.line), collapse=" ")
+  eachrow$new_prm <- paste(as.character(new.param), collapse=" ")
+  print(eachrow)
 
-  googlesheets4::range_write(sheet.id, data = row.modify, range = paste0("A",eachrun+1), col_names = FALSE)
+  googlesheets4::range_write(sheet.id, data = eachrow, range = paste0("A",(eachrow$index+1)), col_names = FALSE, sheet = sheet.name)
 
 
 
@@ -129,4 +137,5 @@ this.num.line <- this.vec.line %>%
 #write modified biology prm file
 writeLines(biology.prm, con = paste0(dir.modify,"/",prm.name))
 
+}
 }

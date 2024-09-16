@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-diet_from_init <- function(predator) {
+diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   # This function takes a predator and its favorite 5 prey by ontogenetic stage (per PPREY matrix) and makes some plots:
   # Horizontal overlap (as the lowest value between s of predator and prey) - how do we handle stages and seasons?
@@ -16,9 +16,9 @@ diet_from_init <- function(predator) {
   #
   print(paste("Extracting info for", predator))
   # make a folder
-  dir.create(paste("diets_from_init", this_run, predator, sep="/"), recursive = T)
+  dir.create(paste(run.dir,"/diets_from_init", this.run, predator, sep="/"), recursive = T)
 
-  predator_name <- grps %>% filter(Code == predator) %>% pull(Name) # need this for the netcdf variables
+  predator_name <- grps %>% dplyr::filter(Code == predator) %>% dplyr::pull(Name) # need this for the netcdf variables
 
   # pull pprey for this predator
   this_pprey <- pprey_mat %>%
@@ -63,7 +63,7 @@ diet_from_init <- function(predator) {
   s_pred <- s %>% dplyr::filter(species == predator)
 
   # need to do this starting from predator life stage
-  pred_stages <- s_pred %>% pull(stage) %>% unique()
+  pred_stages <- s_pred %>% dplyr::pull(stage) %>% unique()
   s_overlap <- data.frame()
   for(i in 1:length(pred_stages)){
 
@@ -159,9 +159,9 @@ diet_from_init <- function(predator) {
           s_overlap_tmp <- s_pred_tmp %>%
             dplyr::left_join(s_prey_tmp, by = c("season","b")) %>%
             dplyr::rowwise() %>%
-            mutate(lo = min(c(s_pred, s_prey))) %>%
+            dplyr::mutate(lo = min(c(s_pred, s_prey))) %>%
             ungroup() %>%
-            mutate(overlap = sum(lo, na.rm = T)) %>% # a value of 0 means no overlap, 1 means complete overlap (identical dists, expected for cannibalism)
+            dplyr::mutate(overlap = sum(lo, na.rm = T)) %>% # a value of 0 means no overlap, 1 means complete overlap (identical dists, expected for cannibalism)
             dplyr::select(season, b, pred, pred_stage, prey, prey_stage, lo, overlap)
 
           # now bind into one dataframe for plotting
@@ -179,7 +179,7 @@ diet_from_init <- function(predator) {
   # drop na's and adjust the stages for facetting
   s_overlap <- s_overlap %>%
     drop_na(prey) %>%
-    mutate(pred_stage = paste("predator", pred_stage, sep = ":"),
+    dplyr::mutate(pred_stage = paste("predator", pred_stage, sep = ":"),
            prey_stage = paste("prey", prey_stage, sep = ":"))
 
   # make a plot per prey per season

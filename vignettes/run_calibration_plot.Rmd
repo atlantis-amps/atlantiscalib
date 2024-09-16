@@ -30,7 +30,7 @@ Check these entries before running, specifies runs, paths and plots to generate
 sheet.name = "calibration_log_HML"
 
 #runs that will be modified, based on run_no in the spreadsheet
-runs.modify <- 100
+runs.modify <- 1:8
 
 #specify email used to access the Google sheet
 myemail <- "hmorzarialuna@gmail.com"#"myemail@gmail.com"
@@ -169,6 +169,7 @@ if(rundietplots == 1) plot_Diets(fungrouplist, prm.modify, runs.modify, threshol
 Plot diet comparison
 ```{r plot diet comparison, include=FALSE}
 
-if(rundietcomparison == 1) plot_DietComparison(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
+if(rundietcomparison == 1) check_diets_init(prm.modify, run.dir, runs.modify, fungrouplist, atlantis.bgm, prm.name, init_file=this.nc)
+
 
 ```
