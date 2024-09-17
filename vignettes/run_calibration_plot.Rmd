@@ -25,6 +25,8 @@ devtools::load_all()
 Check these entries before running, specifies runs, paths and plots to generate
 ```{r set run, include=FALSE}
 
+flagnoclusters = 0 #flag to run on multiple cores, 1 to run on all cores except one, 0 to run on all cores, can help access Rstudio while Atlantis runs are going
+
 #Check before running
 #Name of sheet used in Google sheet calibration log
 sheet.name = "calibration_log_HML"
@@ -109,7 +111,6 @@ prm.modify <- googlesheets4::read_sheet(sheet.id, sheet = sheet.name)
 Creates run directories based on Google sheet runs, and modifies the PRM file based on the Google sheet prm.modify
 
 ```{r read prm changes, include=FALSE}
-library("rbgm")
 lapply(runs.modify, modify_prm, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.name)
 
 
@@ -122,7 +123,7 @@ Manage Atlantis runs, will run the specified directories pulled from column "run
 ```{r manage runs, include=FALSE}
 
 
-manage_atlantis_runs(sh.file, runs.modify, prm.modify, run.dir)
+manage_atlantis_runs(sh.file, runs.modify, prm.modify, run.dir, flagnoclusters)
 
 
 ```
@@ -169,7 +170,11 @@ if(rundietplots == 1) plot_Diets(fungrouplist, prm.modify, runs.modify, threshol
 Plot diet comparison
 ```{r plot diet comparison, include=FALSE}
 
-if(rundietcomparison == 1) check_diets_init(prm.modify, run.dir, runs.modify, fungrouplist, atlantis.bgm, prm.name, init_file=this.nc)
+if(rundietcomparison == 1){
+  library("rbgm")
 
+  check_diets_init(prm.modify, run.dir, runs.modify, fungrouplist, atlantis.bgm, prm.name, init_file=this.nc)
+
+} 
 
 ```

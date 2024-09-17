@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-manage_atlantis_runs <- function(sh.file, runs.modify, prm.modify, run.dir){
+manage_atlantis_runs <- function(sh.file, runs.modify, prm.modify, run.dir, flagnoclusters){
 
 these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
 
@@ -20,7 +20,15 @@ folder.length <- 1:length(folder.paths)
 
 #run multiple Atlantis simulations on local machine cores
 
-NumberOfCluster <- parallel::detectCores()  #- 1
+if(flagnoclusters==1){
+
+  NumberOfCluster <- parallel::detectCores() - 1
+
+} else if(flagnoclusters==0){
+
+  NumberOfCluster <- parallel::detectCores()
+
+}
 
 # Initiate cluster
 cl <- parallel::makeCluster(NumberOfCluster)
