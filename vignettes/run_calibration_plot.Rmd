@@ -109,7 +109,7 @@ prm.modify <- googlesheets4::read_sheet(sheet.id, sheet = sheet.name)
 Creates run directories based on Google sheet runs, and modifies the PRM file based on the Google sheet prm.modify
 
 ```{r read prm changes, include=FALSE}
-
+library("rbgm")
 lapply(runs.modify, modify_prm, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.name)
 
 

@@ -1,12 +1,11 @@
 Package: atlantiscalib
-Title: What the Package Does (One Line, Title Case)
+Title: Atlantis calibration helper
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Hem Nalini", "Morzaria-Luna", , "hmorzaria@hotmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-5265-1049"))
+Description: Package to modify the biology prm, manage runs and plot output for Atlantis model for Puget Sound calibration
+License: MIT license
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -31,7 +30,6 @@ Imports:
     RColorBrewer,
     readr,
     reshape2,
-    rbgm,
     RNetCDF,
     sf,
     stringi,
@@ -43,3 +41,7 @@ Imports:
 Depends: 
     R (>= 2.10)
 LazyData: true
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat
