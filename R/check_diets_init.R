@@ -68,61 +68,61 @@ check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atl
     agemat <- agemat %>% dplyr::mutate(species = substr(V1, 1, 3)) %>% dplyr::rename(agemat = V2) %>% dplyr::select(species, agemat)
 
 
-# prm of run to look at
-bio_prm <- readLines(here::here(paste0("data-raw/",prm.name)))
-# init.nc of run to look at
+    # prm of run to look at
+    bio_prm <- readLines(here::here(paste0("data-raw/",prm.name)))
+    # init.nc of run to look at
 
-init <- tidync::tidync(paste0("data-raw/", init_file))
-init_nc <- ncdf4::nc_open(paste0("data-raw/",init_file))
+    init <- tidync::tidync(paste0("data-raw/", init_file))
+    init_nc <- ncdf4::nc_open(paste0("data-raw/",init_file))
 
-# Turn PRM and INIT to data frames  ---------------------------------------
-# turn pprey matrix to a data frame to work with
-no_age <- c(grps$GroupType[grps$NumStages==1], "DCsed", "DLsed", "DRsed")
+    # Turn PRM and INIT to data frames  ---------------------------------------
+    # turn pprey matrix to a data frame to work with
+    no_age <- c(grps$GroupType[grps$NumStages==1], "DCsed", "DLsed", "DRsed")
 
-# identify and index the PPREY matrix from the PRM file
-diets_start <- grep("pPREY1BE1", bio_prm) # flag of the first line in the PRM - change to first species
-pprey_ind <- which(startsWith(x=bio_prm, "pPREY")==T)
-diets_end <- max(pprey_ind)+2
-DM_prm <- bio_prm[seq(diets_start,diets_end)]
-names_pprey <- bio_prm[pprey_ind]
-val_pprey <- bio_prm[pprey_ind+1]
+    # identify and index the PPREY matrix from the PRM file
+    diets_start <- grep("pPREY1BE1", bio_prm) # flag of the first line in the PRM - change to first species
+    pprey_ind <- which(startsWith(x=bio_prm, "pPREY")==T)
+    diets_end <- max(pprey_ind)+2
+    DM_prm <- bio_prm[seq(diets_start,diets_end)]
+    names_pprey <- bio_prm[pprey_ind]
+    val_pprey <- bio_prm[pprey_ind+1]
 
-# get rid of tabs for AMPS
-names_pprey <- gsub("\t", "", names_pprey)
-val_pprey <- gsub("\t", " ", val_pprey)
+    # get rid of tabs for AMPS
+    names_pprey <- gsub("\t", "", names_pprey)
+    val_pprey <- gsub("\t", " ", val_pprey)
 
-DM_to_format <- t(
-  sapply(seq(1, length(val_pprey)),
-         function(x){
-           vec <- unlist(strsplit(val_pprey[x], " "))
-           vec <- vec[vec != ""] # drop trailing empty spaces if there are any
-           return(vec)
-         })
-)
+    DM_to_format <- t(
+      sapply(seq(1, length(val_pprey)),
+             function(x){
+               vec <- unlist(strsplit(val_pprey[x], " "))
+               vec <- vec[vec != ""] # drop trailing empty spaces if there are any
+               return(vec)
+             })
+    )
 
-colnames(DM_to_format) <- c(fg,c("DCsed","DLsed","DRsed"))
+    colnames(DM_to_format) <- c(fg,c("DCsed","DLsed","DRsed"))
 
-pprey_mat <- DM_to_format %>%
-  tidyr::as_tibble() %>%
-  cbind(label=gsub("\\ .*","",names_pprey)) %>%
-  cbind(Predator=gsub("pPREY","",gsub('[[:digit:]]+', '', gsub("\\ .*","",names_pprey)))) %>%
-  cbind(PreyAgeClass=ifelse(substr(gsub("pPREY", "", gsub("\\ .*","", names_pprey)),1,1)%in%c(1,2),
-                            substr(gsub("pPREY", "", gsub("\\ .*","", names_pprey)),1,1),
-                            "1")) %>%
-  cbind(PredatorAgeClass=ifelse(substr(gsub("pPREY", "", gsub("\\ .*","",names_pprey)),
-                                       nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey))),
-                                       nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey))))%in%c(1,2),
-                                substr(gsub("pPREY", "", gsub("\\ .*","",names_pprey)),
-                                       nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey))),
-                                       nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey)))),
-                                "2")
-  ) %>%
-  dplyr::mutate(PredatorAgeClass=ifelse(PredatorAgeClass==1,"juvenile", "adult"),
-         PreyAgeClass=ifelse(PreyAgeClass==2,"adult", "juvenile")) %>%
-  dplyr::select(c("label","Predator", "PreyAgeClass", "PredatorAgeClass", colnames(DM_to_format)))
+    pprey_mat <- DM_to_format %>%
+      tidyr::as_tibble() %>%
+      cbind(label=gsub("\\ .*","",names_pprey)) %>%
+      cbind(Predator=gsub("pPREY","",gsub('[[:digit:]]+', '', gsub("\\ .*","",names_pprey)))) %>%
+      cbind(PreyAgeClass=ifelse(substr(gsub("pPREY", "", gsub("\\ .*","", names_pprey)),1,1)%in%c(1,2),
+                                substr(gsub("pPREY", "", gsub("\\ .*","", names_pprey)),1,1),
+                                "1")) %>%
+      cbind(PredatorAgeClass=ifelse(substr(gsub("pPREY", "", gsub("\\ .*","",names_pprey)),
+                                           nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey))),
+                                           nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey))))%in%c(1,2),
+                                    substr(gsub("pPREY", "", gsub("\\ .*","",names_pprey)),
+                                           nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey))),
+                                           nchar(gsub("pPREY", "", gsub("\\ .*","",names_pprey)))),
+                                    "2")
+      ) %>%
+      dplyr::mutate(PredatorAgeClass=ifelse(PredatorAgeClass==1,"juvenile", "adult"),
+                    PreyAgeClass=ifelse(PreyAgeClass==2,"adult", "juvenile")) %>%
+      dplyr::select(c("label","Predator", "PreyAgeClass", "PredatorAgeClass", colnames(DM_to_format)))
 
-# create dataframe of horizontal distributions
-s <- data.frame()
+    # create dataframe of horizontal distributions
+    s <- data.frame()
 for(i in 1:length(fg)){
 
   print(paste("doing s for", fg[i]))

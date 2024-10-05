@@ -16,7 +16,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
   #
   print(paste("Extracting info for", predator))
   # make a folder
-  dir.create(paste(run.dir,"/diets_from_init", this.run, predator, sep="/"), recursive = T)
+  dir.create(paste(run.dir,"/diets_from_init", this.run, predator, sep="/"))
 
   predator_name <- grps %>% dplyr::filter(Code == predator) %>% dplyr::pull(name) # need this for the netcdf variables
 
@@ -54,7 +54,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     ggplot2::labs(x="",y="prop from PPREY",title = paste0(predator, "'s PPREY preferences (proportional < 0.95)"))+
     ggplot2::facet_grid(~PredatorAgeClass)
 
-  d_file <- paste("diets_from_init", this.run, predator, "pprey_preferences.png", sep="/")
+  d_file <- paste(run.dir, "diets_from_init", this.run, predator, "pprey_preferences.pdf", sep="/")
 
   ##########################################################################################
   # HORIZONTAL OVERLAP
@@ -222,7 +222,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   s_plot <- patchwork::wrap_plots(p, ncol = 4) # 4 columns arrange the plots by seasons
 
-  s_file <- paste("diets_from_init", this.run, predator, "horiz_overlap.png", sep="/")
+  s_file <- paste(run.dir, "diets_from_init", this.run, predator, "horiz_overlap.pdf", sep="/")
 
   # ggsave(s_file, s_plot, width = 20, height = s_length, limitsize = FALSE)
 
@@ -307,7 +307,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   v_plot <- patchwork::wrap_plots(p, ncol = 2) # 4 columns arrange the plots by seasons
 
-  v_file <- paste("diets_from_init", this.run, predator, "vert_overlap.png", sep="/")
+  v_file <- paste(run.dir,"diets_from_init", this.run, predator, "vert_overlap.pdf", sep="/")
 
   ##########################################################################################
   # GAPE SIZE OVERLAP
@@ -489,13 +489,10 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       kableExtra::kbl(caption= paste(predator, "s favorite vertebrate prey items (with age class)'\n")) %>%
       kableExtra::kable_classic(full_width = F, html_font = "Cambria")
 
-    #save the table as image
+    #save the table as html
+
     g_file <- paste(run.dir,"diets_from_init", this.run, predator, paste0("gape_table_", pred_stages[i], ".html"), sep="/")
-    html_to_pdf(file_path = g_file)
-
-    cat(yaml_header, gape_kable, sep="\n", file=g_file, append = FALSE)
-
-    rmarkdown::render(g_file, output_format = "pdf_document")
+    kableExtra::save_kable(gape_kable, g_file)
 
   }
 
@@ -503,12 +500,12 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
   ##########################################################################################
   # write everything out
   # diet preferences
-  ggplot4::ggsave(d_file, d_plot, width = 8, height = 7)
+  ggplot2::ggsave(d_file, d_plot, width = 8, height = 7, create.dir = TRUE)
 
   # horizontal distributions
-  ggplot4::ggsave(s_file, s_plot, width = 22, height = s_length*1.1, limitsize = FALSE)
+  ggplot2::ggsave(s_file, s_plot, width = 22, height = s_length*1.1, limitsize = FALSE, create.dir = TRUE)
 
   # vertical distributions
-  ggplot4::ggsave(v_file, v_plot, width = 10, height = 12)
+  ggplot2::ggsave(v_file, v_plot, width = 10, height = 12, create.dir = TRUE)
 
 }
