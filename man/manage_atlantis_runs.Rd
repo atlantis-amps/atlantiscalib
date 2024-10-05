@@ -4,7 +4,7 @@
 \alias{manage_atlantis_runs}
 \title{Manage and run Atlantis runs}
 \usage{
-manage_atlantis_runs(sh.file, runs.modify, prm.modify, run.dir)
+manage_atlantis_runs(sh.file, runs.modify, prm.modify, run.dir, flagnoclusters)
 }
 \arguments{
 \item{sh.file}{Atlantis run}
@@ -14,6 +14,8 @@ manage_atlantis_runs(sh.file, runs.modify, prm.modify, run.dir)
 \item{prm.modify}{Google sheet}
 
 \item{run.dir}{Directory where runs are stored}
+
+\item{flagnoclusters}{description}
 }
 \description{
 Manage and run Atlantis runs

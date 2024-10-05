@@ -10,10 +10,12 @@
 #' @export
 #'
 #' @examples
-read_biomass <- function(eachfolder, fg.list, folder.paths, these.runs, maxtimestep, biom.output.file){
+read_biomass <- function(eachfolder, fg.list, folder.paths, these.runs, biom.output.file){
 
   this.folder <- folder.paths[eachfolder]
   this.run <- these.runs[eachfolder]
+
+  maxtimestep <- prm.modify[prm.modify$run_name==this.run,][1,]$max_timestep_plot
 
   print(this.folder)
 

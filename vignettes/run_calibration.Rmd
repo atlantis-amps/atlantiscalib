@@ -1,13 +1,17 @@
 ---
-title: "Run and plot AMPS calibration"
-author: "Hem Nalini Morzaria-Luna"
-date: "`r Sys.Date()`"
-output: html_document
+title: "run_calibration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{run_calibration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(include = FALSE)
-#turn off scientific notation so numbers with decimals are printed
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 options(scipen = 999)
 
 #only packages that are needed as loaded, functions from other packages are called directly as dplyr::filter
@@ -19,8 +23,11 @@ lapply(.packages, require, character.only=TRUE)
 
 
 devtools::load_all()
-```
+#install needed dependencies
+system("sudo chmod + ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
+system("sudo sh ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
 
+```
 
 Check these entries before running, specifies runs, paths and plots to generate
 ```{r set run, include=FALSE}
@@ -29,7 +36,7 @@ flagnoclusters = 0 #flag to run on multiple cores, 1 to run on all cores except 
 
 #Check before running
 #Name of sheet used in Google sheet calibration log
-sheet.name = "calibration_log_HML"
+sheet.name = "calibration_log_example"
 
 #runs that will be modified, based on run_no in the spreadsheet
 runs.modify <- 1:8
@@ -38,30 +45,27 @@ runs.modify <- 1:8
 myemail <- "hmorzarialuna@gmail.com"#"myemail@gmail.com"
 
 #directory with base run
-base.dir <- "/home/atlantis/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2"
+#base.dir <- "/home/atlantis/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2"
 #directory where to store runs
 run.dir <- "/nfsdata/ampscalibration"
 #name of biology prm
 prm.name <- "AMPSbioparam_mv1_2024_V4.prm"
+#name of functional group file
+fungrouplist <- readr::read_csv("~/atlantiscalib/data-raw/PugetSoundAtlantisFunctionalGroups_2024.csv")
+#name of guild group file
+group_guilds <- readr::read_csv("~/atlantiscalib/data-raw/group_guilds.csv")
 
-sh.file <- "amps_cal.sh" #original sh file
+
+sh.file <- "amps_cal.sh" #name sh file
 
 startyear <- 2011 #model start year
-runtime <- 3650 #length of runs in days
-outputfrequency <- 73 #output frequency in days
-#set maxtimestep to the maximum number of days you want to plot in comparison files
-maxtimestep <- 3650
 this.nc <- "AMPS_2024.nc"
 this.output.nc <- "AMPS_OUT.nc" #name of output nc file
 
 #options for diet plots
 atlantis.bgm <- here::here("data-raw","PugetSound_89b_070116.bgm")
 outdietfile <- "AMPS_OUTDietCheck.txt"
-
-threshold <- 0.2 #threshold for diet plots, will only show groups that correspond to this and higher proportion of the diet
-starttimediet <- 0 #minimum timestep selected for diet plots, it will show data from this point
-endtimediet <- 3650 #maximum timestep selected for diet plots, it will show data up this point
-#End check these entries before running
+atlantis.run <- "PugetSound_run.prm"
 
 #plots to run, if these flags are turned off, this RMD will only create run folders, run them and gather output
 runbaseplots <- 1 #baseplots are Biomass, ResN, StrN, Numbers, Weight-at-age for individual runs
@@ -106,12 +110,13 @@ prm.modify <- googlesheets4::read_sheet(sheet.id, sheet = sheet.name)
 
 ```
 
-## Modify PRM
+## Modify input files
 
-Creates run directories based on Google sheet runs, and modifies the PRM file based on the Google sheet prm.modify
+Creates run directories based on Google sheet runs, modifies the biology PRM file and run file to update run time based on the Google sheet prm.modify
 
 ```{r read prm changes, include=FALSE}
-lapply(runs.modify, modify_prm, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.name)
+
+lapply(runs.modify, modify_prm, sheet.id, sheet.name, run.dir, prm.modify, prm.name, atlantis.run)
 
 
 ```
@@ -135,7 +140,7 @@ Extract biomass, numbers, ResN, StrN, and Weight-at-age for each functional grou
 #loads functional group file
 data(fungrouplist)
 
-get_output_data(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc, maxtimestep)
+get_output_data(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc)
 
 
 ```
@@ -150,7 +155,7 @@ if(runbaseplots == 1) plot_calibration_runs(fungrouplist, prm.modify, run.dir)
 Plot biomass comparison plots for all runs
 ```{r compare biomass, include=FALSE}
 
-if(runcomparebiomass == 1) compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify)
+if(runcomparebiomass == 1) compare_biomass(fungrouplist, prm.modify, run.dir, runs.modify)
 
 ```
 
@@ -163,7 +168,8 @@ if(runguildbiomass == 1) plot_guild_biomass(fungrouplist, prm.modify, group_guil
 Plot diets
 ```{r plot diets, include=FALSE}
 
-if(rundietplots == 1) plot_Diets(fungrouplist, prm.modify, runs.modify, threshold, outdietfile, starttimediet, endtimediet, run.dir)
+#NOTE diet plots are saved in the /outputFolder of every run
+if(rundietplots == 1) plot_diets(fungrouplist, prm.modify, runs.modify, outdietfile, run.dir)
 
 ```
 

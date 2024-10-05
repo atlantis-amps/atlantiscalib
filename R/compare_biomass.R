@@ -10,7 +10,7 @@
 #' @export
 #'
 #' @examples
-compare_biomass <- function(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify){
+compare_biomass <- function(fungrouplist, prm.modify, run.dir, runs.modify){
 
   these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
 
@@ -37,19 +37,18 @@ names(run.colors) <- these.runs
 # }
 
 fg.list <- fungrouplist %>%
-  dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname) %>%
-  dplyr::filter(!Code %in% c("DIN","DL"))
+  dplyr::select(Code, IsTurnedOn, GroupType, NumCohorts, name, longname)
 
 print("Reading biomass data")
-lapply(folder.num, read_biomass, fg.list, folder.paths, these.runs, maxtimestep, biom.output.file)
+lapply(folder.num, read_biomass, fg.list, folder.paths, these.runs, biom.output.file)
 
 print("Plotting biomass data")
-plot_biomass(biom.output.file, run.colors, run.dir)
+plot_biomass(biom.output.file, run.colors, run.dir, runs.modify)
 
 
 print("Combining pdf comparison plots")
 pdf.list <- list.files(path=run.dir, pattern="compare_runs.*\\.pdf$", full.names = TRUE)
-qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/biomass_compare_plots_runs",paste0(as.character(runs.modify),collapse="-"),".pdf"))
+qpdf::pdf_combine(pdf.list, output = paste0(run.dir,"/biomass_compare_plots_runs_",paste0(as.character(min(runs.modify)), "-",as.character(max(runs.modify))),".pdf"))
 file.remove(pdf.list)
 
 

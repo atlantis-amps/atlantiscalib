@@ -3,13 +3,13 @@
 #' @param biom.output.file biomass for all runs
 #' @param run.colors colors for each run
 #' @param run.directory directory where runs are stored
-
+#' @param runs.modify runs that were modified and will be plotted
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plot_biomass <- function(biom.output.file, run.colors, run.dir){
+plot_biomass <- function(biom.output.file, run.colors, run.dir, runs.modify){
 
   thisdataset <- data.table::fread(paste0(run.dir,"/", biom.output.file,".csv"))
 
@@ -23,9 +23,11 @@ plot_biomass <- function(biom.output.file, run.colors, run.dir){
 
     print(i)
 
+    legend.rows <- ceiling(max(runs.modify)/3)
+
     pplot <- thisdataset %>%
       dplyr::mutate(run_name = as.factor(run_name)) %>%
-      ggplot2::ggplot(ggplot2::aes(x=Year,y=biomass, group = run_name, colour = run_name, linetype=run_name))+
+      ggplot2::ggplot(ggplot2::aes(x=Year,y=biomass, group = run_name, colour = run_name))+
       ggplot2::geom_line(alpha = 0.8)+
       ggplot2::labs(y= "Biomass", x = "Year") +
       ggplot2::scale_color_manual(values=run.colors) +
@@ -33,7 +35,8 @@ plot_biomass <- function(biom.output.file, run.colors, run.dir){
       ggplot2::theme(legend.position="none") +
       ggplot2::theme_minimal() +
       ggplot2::scale_y_continuous(limits = c(0,NA)) +
-      ggplot2::theme(legend.position = "top")
+      ggplot2::theme(legend.position = "top") +
+      ggplot2::guides(colour = ggplot2::guide_legend(nrow = legend.rows))
 
 
     thisplotname <- paste(biom.output.file, i,"plot.pdf",sep="_")

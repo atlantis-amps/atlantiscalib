@@ -6,24 +6,48 @@
 #' @param run.time
 #' @param fungrouplist
 #' @param this.output.nc
-#' @param maxtimestep
+#'
 #'
 #' @return
 #' @export
 #'
 #' @examples
-get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc, maxtimestep){
+get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc){
 
-  scenario.names <- prm.modify[prm.modify$run_no%in%runs.modify,]$run_name
+  data(fungrouplist)
+  scenario.names <- unique(prm.modify[prm.modify$run_no%in%runs.modify,]$run_name)
 
   folder.paths <- paste0(run.dir,"/",scenario.names,"/outputFolder")
 
   folder.num <- 1:length(folder.paths)
 
-  for(eachnum in folder.num){
+  NumberOfCluster <- parallel::detectCores()
+
+  # Initiate cluster
+  cl <- parallel::makeCluster(NumberOfCluster)
+  doSNOW::registerDoSNOW(cl)
+
+  # Run this for loop for one call of model from each cluster, assuming cluster is already initiated.
+  atlantis.scenarios <- foreach::foreach(eachnum=folder.num, .verbose = TRUE) %dopar% {
+
+    .packages = c("dplyr","readr","RNetCDF")
+
+
+    # Install CRAN packages (if not already installed)
+   # .inst <- .packages %in% installed.packages()
+
+   # if(length(.packages[!.inst]) > 0) install.packages(.packages[!.inst], )
+
+    # Load packages into session
+    lapply(.packages, require, character.only=TRUE)
+
+    source("~/atlantiscalib/R/get_nc_data.R")
 
     this.run <- scenario.names[eachnum]
     this.path <- folder.paths[eachnum]
+
+    this.maxtimestep <- prm.modify[prm.modify$run_name==this.run,][1,]$max_timestep_plot
+    outputfrequency <- prm.modify[prm.modify$run_name==this.run,][1,]$output_frequency_days
 
     #needed in case the file is going to be overwritten
     system(paste0("sudo chmod -R a+rwx ", this.path), wait = TRUE)
@@ -32,7 +56,7 @@ get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungroup
       dplyr::select(Time:DIN) %>%
       tidyr::gather(Code,biomass, -Time) %>%
       dplyr::left_join(fungrouplist, by="Code") %>%
-      dplyr::filter(Time <= maxtimestep) %>%
+      dplyr::filter(Time <= this.maxtimestep) %>%
       dplyr::mutate(Year = Time/365) %>%
       dplyr::select(Code, biomass, Index, name, longname, Year)
 
@@ -44,7 +68,7 @@ get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungroup
     used.groups <- fungrouplist[fungrouplist$IsTurnedOn==1,]
     vert.groups <- used.groups[used.groups$GroupType %in% c("FISH","SHARK","BIRD","MAMMAL"),]$name
 
-    group.atlantis.data <- lapply(vert.groups, get_nc_data, thisncfile = nc, fungrouplist, runtime, maxtimestep) %>%
+    group.atlantis.data <- lapply(vert.groups, get_nc_data, thisncfile = nc, fungrouplist, prm.modify, maxtimestep=this.maxtimestep, outputfrequency) %>%
       dplyr::bind_rows()
 
     readr::write_csv(group.atlantis.data, paste0(this.path,"/Nums_ResN_W_",this.run,".csv"))

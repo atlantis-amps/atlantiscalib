@@ -8,10 +8,10 @@ modify_prm(
   eachrun,
   sheet.id,
   sheet.name,
-  base.dir,
   run.dir,
   prm.modify,
-  prm.name
+  prm.name,
+  atlantis.run
 )
 }
 \arguments{
@@ -21,13 +21,13 @@ modify_prm(
 
 \item{sheet.name}{Google sheet name}
 
-\item{base.dir}{Base directory to copy}
-
 \item{run.dir}{Run storage}
 
 \item{prm.modify}{Google sheet with parameter changes}
 
 \item{prm.name}{Name of prm file}
+
+\item{atlantis.run}{Name of run file}
 }
 \description{
 Modify biology prm

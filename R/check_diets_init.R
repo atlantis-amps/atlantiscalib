@@ -32,7 +32,7 @@ check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atl
 
   # functional groups
   grps <- fungrouplist
-  fg <- grps %>% dplyr::pull(Code) # groups from group file
+  fg <- grps %>% dplyr::filter(Code!="DIN") %>% dplyr::pull(Code) # groups from group file, remove DIN from diets
   verts <- grps %>% dplyr::filter(GroupType %in% c("MAMMAL","BIRD","SHARK","FISH")) %>% dplyr::pull(Code)
   inverts <- dplyr::setdiff(fg, verts)
 
@@ -69,7 +69,7 @@ check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atl
 
 
 # prm of run to look at
-bio_prm <- readLines(paste0("data-raw/",prm.name))
+bio_prm <- readLines(here::here(paste0("data-raw/",prm.name)))
 # init.nc of run to look at
 
 init <- tidync::tidync(paste0("data-raw/", init_file))

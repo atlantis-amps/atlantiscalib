@@ -10,8 +10,9 @@
 #' @export
 #'
 #' @examples
-get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep){
+get_nc_data <- function(eachgroup, thisncfile, fungrouplist, prm.modify, maxtimestep, outputfrequency){
 
+  runtime <- prm.modify$run_length_days
   print(paste("Analyzing this group",eachgroup))
 
   this.sprow <- fungrouplist %>%
@@ -55,6 +56,7 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep
         print(eachvariable)
 
         thisData <- RNetCDF::var.get.nc(thisncfile, eachvariable)
+        print(dim(thisData))
 
         if(eachvarlist == "_Wage") {
 
@@ -63,10 +65,21 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep
           variable.type = "Wage"
         }
 
-        print(dim(thisData))
+
         thisData[thisData==0]<-NA  # Replace 0's with NA
-        thisData <- thisData[1:7,2:89,1:(maxtimestep/outputfrequency)]
-        thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
+
+        if(maxtimestep/outputfrequency==1){
+
+          thisData <- thisData[1:7,2:89]
+          thisDataMeanMg <-apply(thisData,2,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
+
+        } else {
+
+          thisData <- thisData[1:7,2:89,1:(maxtimestep/outputfrequency)]
+          thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
+
+        }
+
 
         thisY <-tibble::tibble(variable=thisDataMeanMg/thisDataMeanMg[1]) %>%  # Normalize by initial value
           dplyr::mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
@@ -93,10 +106,21 @@ get_nc_data <- function(eachgroup,thisncfile, fungrouplist, runtime, maxtimestep
         thisData <- RNetCDF::var.get.nc(thisncfile, eachvariable)
         thisData[thisData==0]<-NA  # Replace 0's with NA
         print(dim(thisData))
-        thisData <- thisData[1:7,2:89,1:(maxtimestep/outputfrequency)]
-        thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mea]
+
+        if(maxtimestep/outputfrequency==1){
+
+          thisData <- thisData[1:7,2:89]
+          thisDataMeanMg <-apply(thisData,2,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
+          thisDataNums<-apply(thisData,2,sum,na.rm = TRUE)#Get nums over time, summing over depth and location
+
+        } else {
+
+          thisData <- thisData[1:7,2:89,1:(maxtimestep/outputfrequency)]
+          thisDataMeanMg <-apply(thisData,3,mean,na.rm = TRUE) #Get mean size over time, averaging over depth and location
+          thisDataNums<-apply(thisData,3,sum,na.rm = TRUE)#Get nums over time, summing over depth and location
+
+        }
         #thisData <- thisData[1:7,2:89,1:51] #use this for 10 year runs
-        thisDataNums<-apply(thisData,3,sum,na.rm = TRUE)#Get nums over time, summing over depth and location
         thisY <- tibble::tibble(variable=thisDataNums) %>%  # Normalize by initial value
           dplyr::mutate(time = 1:nrow(.), age = eachage, group = eachvariable, variable_type= variable.type, code = this.sprow$Code)
 

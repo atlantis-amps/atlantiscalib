@@ -18,7 +18,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
   # make a folder
   dir.create(paste(run.dir,"/diets_from_init", this.run, predator, sep="/"), recursive = T)
 
-  predator_name <- grps %>% dplyr::filter(Code == predator) %>% dplyr::pull(Name) # need this for the netcdf variables
+  predator_name <- grps %>% dplyr::filter(Code == predator) %>% dplyr::pull(name) # need this for the netcdf variables
 
   # pull pprey for this predator
   this_pprey <- pprey_mat %>%
@@ -44,7 +44,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     dplyr::ungroup()
 
 
-  this_pal <- grDevices::colorRampPalette(brewer.pal(12, "Paired"))
+  this_pal <- grDevices::colorRampPalette(RColorBrewer::brewer.pal(12, "Paired"))
 
   d_plot <- d_df %>%
     ggplot2::ggplot()+
@@ -54,7 +54,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     ggplot2::labs(x="",y="prop from PPREY",title = paste0(predator, "'s PPREY preferences (proportional < 0.95)"))+
     ggplot2::facet_grid(~PredatorAgeClass)
 
-  d_file <- paste("diets_from_init", this_run, predator, "d.png", sep="/")
+  d_file <- paste("diets_from_init", this.run, predator, "pprey_preferences.png", sep="/")
 
   ##########################################################################################
   # HORIZONTAL OVERLAP
@@ -91,7 +91,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       prey_stages <- fav_prey_df %>% dplyr::filter(Prey == fav_prey[j]) %>% dplyr::pull(PreyAgeClass) %>% unique()
 
       # now subset s_prey data set to the fav_prey[j] that this loop iteration is doing
-      this_s_prey <- s_prey %>% filter(species == fav_prey[j])
+      this_s_prey <- s_prey %>% dplyr::filter(species == fav_prey[j])
 
       if(nrow(this_s_prey)==0) {next}
 
@@ -99,7 +99,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       # To make the code work, duplicate it so that there are juvenile distributions for biomass pools
       # these will be identical to the "adult" distributions
       if(length(unique(this_s_prey$stage)) == 1){
-        this_s_prey <- dplyr::rbind(this_s_prey,
+        this_s_prey <- rbind(this_s_prey,
                                     this_s_prey %>% dplyr::mutate(stage = "juvenile"))
       }
 
@@ -160,7 +160,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
             dplyr::left_join(s_prey_tmp, by = c("season","b")) %>%
             dplyr::rowwise() %>%
             dplyr::mutate(lo = min(c(s_pred, s_prey))) %>%
-            ungroup() %>%
+            dplyr::ungroup() %>%
             dplyr::mutate(overlap = sum(lo, na.rm = T)) %>% # a value of 0 means no overlap, 1 means complete overlap (identical dists, expected for cannibalism)
             dplyr::select(season, b, pred, pred_stage, prey, prey_stage, lo, overlap)
 
@@ -178,7 +178,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   # drop na's and adjust the stages for facetting
   s_overlap <- s_overlap %>%
-    drop_na(prey) %>%
+    tidyr::drop_na(prey) %>%
     dplyr::mutate(pred_stage = paste("predator", pred_stage, sep = ":"),
            prey_stage = paste("prey", prey_stage, sep = ":"))
 
@@ -191,7 +191,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
     #print(this_prey)
 
-    s_overlap_tmp <- s_overlap %>% filter(prey == this_prey)
+    s_overlap_tmp <- s_overlap %>% dplyr::filter(prey == this_prey)
 
     for(j in 1:length(unique(s_overlap_tmp$season))){
 
@@ -206,15 +206,15 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
       p[[idx]] <- amps_sf %>%
         dplyr::select(box_id) %>%
-        dplyr:full_join(s_overlap_tmp, by = c("box_id" = "b")) %>%
-        dplyr:filter(prey == unique(s_overlap_tmp$prey), season == unique(s_overlap_tmp$season)[j]) %>%
-        ggplot4::ggplot()+
-        ggplot4::geom_sf(ggplot4::aes(fill = lo)) +
-        ggplot4::scale_fill_viridis() +
-        ggplot4::theme_bw() +
-        ggplot4::geom_text(ggplot4::aes(x=Inf,y=Inf,hjust=1,vjust=1,label=round(overlap,3)), color = "red")+
-        ggplot4::labs(x="",y="",fill="Lower s", title = paste(predator,"eating",this_prey,"in season",this_season))+
-        ggplot4::facet_grid(prey_stage~pred_stage)
+        dplyr::full_join(s_overlap_tmp, by = c("box_id" = "b")) %>%
+        dplyr::filter(prey == unique(s_overlap_tmp$prey), season == unique(s_overlap_tmp$season)[j]) %>%
+        ggplot2::ggplot()+
+        ggplot2::geom_sf(ggplot2::aes(fill = lo)) +
+        viridis::scale_fill_viridis() +
+        ggplot2::theme_bw() +
+        ggplot2::geom_text(ggplot2::aes(x=Inf,y=Inf,hjust=1,vjust=1,label=round(overlap,3)), color = "red")+
+        ggplot2::labs(x="",y="",fill="Lower s", title = paste(predator,"eating",this_prey,"in season",this_season))+
+        ggplot2::facet_grid(prey_stage~pred_stage)
     }
   }
 
@@ -222,7 +222,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   s_plot <- patchwork::wrap_plots(p, ncol = 4) # 4 columns arrange the plots by seasons
 
-  s_file <- paste("diets_from_init", this_run, predator, "horiz_overlap.png", sep="/")
+  s_file <- paste("diets_from_init", this.run, predator, "horiz_overlap.png", sep="/")
 
   # ggsave(s_file, s_plot, width = 20, height = s_length, limitsize = FALSE)
 
@@ -282,7 +282,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   # drop na's and adjust the stages for facetting
   v_overlap <- v_overlap %>%
-    drop_na(prey) %>%
+    tidyr::drop_na(prey) %>%
     dplyr::mutate(pred_stage = paste("predator", pred_stage, sep = ":"),
                   prey_stage = paste("prey", prey_stage, sep = ":"))
 
@@ -297,9 +297,9 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     p[[i]] <- vp %>%
       ggplot2::ggplot()+
       ggplot2::geom_tile(ggplot2::aes(x = time, y = factor(-z), fill = lo)) +
-      ggplot2::scale_fill_viridis() +
+      viridis::scale_fill_viridis() +
       ggplot2::theme_bw() +
-      ggplot2::geom_text(aes(x=time,y=Inf,hjust=1,vjust=1,label=round(overlap,2)), color = "red")+
+      ggplot2::geom_text(ggplot2::aes(x=time,y=Inf,hjust=1,vjust=1,label=round(overlap,2)), color = "red")+
       ggplot2::labs(x="", y="z (1 = surface)", fill="Lower VERT", title = paste(predator,"eating",this_prey))+
       ggplot2::facet_grid(prey_stage~pred_stage)
 
@@ -307,7 +307,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   v_plot <- patchwork::wrap_plots(p, ncol = 2) # 4 columns arrange the plots by seasons
 
-  v_file <- paste("diets_from_init", this_run, predator, "vert_overlap.png", sep="/")
+  v_file <- paste("diets_from_init", this.run, predator, "vert_overlap.png", sep="/")
 
   ##########################################################################################
   # GAPE SIZE OVERLAP
@@ -343,13 +343,13 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     dplyr::select(species,age,weight_g)
 
   # add upper and lower limit from gape size
-  weight <- weight %>%
-    dplyr::mutate(low = weight_g * (g_pred %>% filter(limit == "low") %>% pull(g)),
-                  high = weight_g * (g_pred %>% filter(limit == "high") %>% pull(g)))
+  weight_lim <- weight %>%
+    dplyr::mutate(low = weight_g * (g_pred %>% filter(limit == "low") %>% dplyr::pull(g)),
+                  high = weight_g * (g_pred %>% filter(limit == "high") %>% dplyr::pull(g)))
 
   # add stage and species code
-  pred_weight <- weight %>%
-    dplyr::left_join(grps %>% dplyr::select(Code, Name), by = c("species"="Name")) %>%
+  pred_weight <- weight_lim %>%
+    dplyr::left_join(grps %>% dplyr::select(Code, name), by = c("species"="name")) %>%
     dplyr::left_join(agemat, by = c("Code"="species")) %>%
     dplyr::mutate(age = age -1,
                   stage = ifelse(age < agemat, "juvenile", "adult")) %>%
@@ -366,15 +366,15 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       dplyr::arrange(desc(pprey)) %>%
       dplyr::filter(pprey > 0) %>%
       dplyr::slice_head(n = 5) %>%
-      ungroup()
+      dplyr::ungroup()
 
     fav_prey <- fav_prey_df %>% dplyr::select(Prey) %>% distinct()
 
     if(nrow(fav_prey)==0) {next}
 
     prey_names <- fav_prey %>%
-      dplyr::left_join(grps %>% dplyr::select(Code, Name), by = c("Prey"="Code")) %>%
-      dplyr::pull(Name)
+      dplyr::left_join(grps %>% dplyr::select(Code, name), by = c("Prey"="Code")) %>%
+      dplyr::pull(name)
 
     pattern <- paste(prey_names, collapse = "|") # Create a single pattern string
 
@@ -399,7 +399,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
     # add stage and species code
     weight <- weight %>%
-      dplyr::left_join(grps %>% dplyr::select(Code, Name), by = c("species"="Name")) %>%
+      dplyr::left_join(grps %>% dplyr::select(Code, name), by = c("species"="name")) %>%
       dplyr::left_join(agemat, by = c("Code"="species")) %>%
       dplyr::mutate(age = age -1,
              stage = ifelse(age < agemat, "juvenile", "adult")) %>%
@@ -476,7 +476,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     # rearrange and write out a table
     eaten_wide <- eaten %>%
       dplyr::filter(stage == pred_stages[i]) %>%
-      dplyr::pivot_wider(id_cols = c(predator,stage,age), names_from = prey, values_from = eaten_prey_ages)
+      tidyr::pivot_wider(id_cols = c(predator,stage,age), names_from = prey, values_from = eaten_prey_ages)
 
     # Apply this function to each column of the data frame
     eaten_wide[] <- lapply(eaten_wide, replace_numeric0_with_NA)
@@ -486,29 +486,15 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
     # Create a kable table
     gape_kable <- eaten_wide %>%
-      knitr::kable(format = "markdown", booktabs = TRUE)
+      kableExtra::kbl(caption= paste(predator, "s favorite vertebrate prey items (with age class)'\n")) %>%
+      kableExtra::kable_classic(full_width = F, html_font = "Cambria")
 
-    # Save the table as PDF
-    # Using R Markdown
-    # For this, you'll need to put your table creation code in an R Markdown document
-    # and then knit the document to PDF.
+    #save the table as image
+    g_file <- paste(run.dir,"diets_from_init", this.run, predator, paste0("gape_table_", pred_stages[i], ".html"), sep="/")
+    html_to_pdf(file_path = g_file)
 
-    yaml_header <- paste0(
-      "---\n",
-      "title: '", predator, "s favorite vertebrate prey items (with age class)'\n",
-      "output: \n",
-      "  pdf_document:\n",
-      "    latex_engine: xelatex\n",
-      "header-includes:\n",
-      "  - '\\usepackage{graphicx}'\n",
-      "  - '\\usepackage{grffile}'\n",
-      "  - '\\tiny' # Set the font size\n",
-      "geometry: landscape\n",
-      "---\n"
-    )
+    cat(yaml_header, gape_kable, sep="\n", file=g_file, append = FALSE)
 
-    g_file <- paste("diets_from_init", this_run, predator, paste0("gape_table_", pred_stages[i], ".Rmd"), sep="/")
-    cat(yaml_header, gape_kable, sep="\n", file=g_file)
     rmarkdown::render(g_file, output_format = "pdf_document")
 
   }

@@ -4,6 +4,7 @@
 #' @param runs.modify Entries from Google sheet that will be run
 #' @param prm.modify Google sheet
 #' @param run.dir Directory where runs are stored
+#' @param flagnoclusters description
 #'
 #' @return
 #' @export
@@ -11,10 +12,13 @@
 #' @examples
 manage_atlantis_runs <- function(sh.file, runs.modify, prm.modify, run.dir, flagnoclusters){
 
-these.runs <- prm.modify[prm.modify$run_no %in% runs.modify,]$run_name
+these.runs <- unique(prm.modify[prm.modify$run_no %in% runs.modify,]$run_name)
+
+print(these.runs)
 
 folder.paths <- paste0(run.dir, "/", these.runs)
 
+print(folder.paths)
 folder.length <- 1:length(folder.paths)
 
 

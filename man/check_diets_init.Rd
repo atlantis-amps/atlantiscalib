@@ -11,11 +11,11 @@ check_diets_init(
   fungrouplist,
   atlantis.bgm,
   prm.name,
-  this.nc
+  init_file
 )
 }
 \arguments{
-\item{this.nc}{}
+\item{init_file}{}
 }
 \description{
 Explore diet interactions

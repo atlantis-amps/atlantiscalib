@@ -4,12 +4,14 @@
 \alias{plot_biomass}
 \title{Plot biomass comparison}
 \usage{
-plot_biomass(biom.output.file, run.colors, run.dir)
+plot_biomass(biom.output.file, run.colors, run.dir, runs.modify)
 }
 \arguments{
 \item{biom.output.file}{biomass for all runs}
 
 \item{run.colors}{colors for each run}
+
+\item{runs.modify}{runs that were modified and will be plotted}
 
 \item{run.directory}{directory where runs are stored}
 }

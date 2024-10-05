@@ -3,16 +3,16 @@
 #' @param eachrun run number from Google sheet
 #' @param sheet.id Google sheet id
 #' @param sheet.name Google sheet name
-#' @param base.dir Base directory to copy
 #' @param run.dir Run storage
 #' @param prm.modify Google sheet with parameter changes
 #' @param prm.name Name of prm file
+#' @param atlantis.run Name of run file
 #'
 #' @return
 #' @export
 #'
 #' @examples
-modify_prm <- function(eachrun, sheet.id, sheet.name, base.dir, run.dir, prm.modify, prm.name){
+modify_prm <- function(eachrun, sheet.id, sheet.name, run.dir, prm.modify, prm.name, atlantis.run){
 
   print(eachrun)
 #run that will be created
@@ -26,6 +26,9 @@ dir.modify <- row.modify %>%
   dplyr::pull(run_name) %>%
   paste0(run.dir,"/",.)
 
+base.dir <- row.modify %>%
+  dplyr::distinct(based_on_run)
+
 print(paste("Creating run",dir.modify))
 
 if(!dir.exists(dir.modify)){
@@ -38,6 +41,19 @@ if(!dir.exists(dir.modify)){
   system(paste0("cp ", here::here(base.dir),"/* ", here::here(dir.modify)), wait = TRUE)
 
 }
+
+#read run file from new folder
+run.prm <- readLines(paste0(dir.modify,"/",atlantis.run))
+#get full line for parameter
+this.nonvec.line <- run.prm[grep(paste0("^tstop"),run.prm)]
+print(this.nonvec.line)
+extra.text <- "   # Stop time after the given period  18255   30yr:  10960   25 yr: 9125   20yr: 7300  15 yr: 5500  10yr:3700  5yr:  1850  3yr: 1100  101yr-- 37000 Test run: 18255"
+#find line number of the parameter
+line.num <- grep(paste0("^tstop"),run.prm)
+new.run.val <- paste0("tstop      	",row.modify$run_length_days[1], " day ",extra.text)
+newrun.prm <- gsub(this.nonvec.line, new.run.val, run.prm)
+writeLines(newrun.prm, con = paste0(dir.modify,"/",atlantis.run))
+
 
 #read biology prm from new folder
 biology.prm <- readLines(paste0(dir.modify,"/",prm.name))

@@ -4,7 +4,7 @@
 \alias{compare_biomass}
 \title{Compare biomass across runs}
 \usage{
-compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify)
+compare_biomass(fungrouplist, prm.modify, run.dir, runs.modify)
 }
 \arguments{
 \item{fungrouplist}{list of functional groups}
@@ -13,9 +13,9 @@ compare_biomass(fungrouplist, prm.modify, run.dir, maxtimestep, runs.modify)
 
 \item{run.dir}{directory where runs are stored}
 
-\item{maxtimestep}{maximum desired timestep}
-
 \item{runs.modify}{runs to compare}
+
+\item{maxtimestep}{maximum desired timestep}
 }
 \description{
 Compare biomass across runs

@@ -10,12 +10,11 @@ get_output_data(
   run.dir,
   run.time,
   fungrouplist,
-  this.output.nc,
-  maxtimestep
+  this.output.nc
 )
 }
 \arguments{
-\item{maxtimestep}{}
+\item{this.output.nc}{}
 }
 \description{
 Get output data from runs

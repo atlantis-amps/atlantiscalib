@@ -4,7 +4,14 @@
 \alias{get_nc_data}
 \title{Get nc data}
 \usage{
-get_nc_data(eachgroup, thisncfile, fungrouplist, runtime, maxtimestep)
+get_nc_data(
+  eachgroup,
+  thisncfile,
+  fungrouplist,
+  prm.modify,
+  maxtimestep,
+  outputfrequency
+)
 }
 \arguments{
 \item{eachgroup}{each vertebrate group}
@@ -13,9 +20,9 @@ get_nc_data(eachgroup, thisncfile, fungrouplist, runtime, maxtimestep)
 
 \item{fungrouplist}{functional group file}
 
-\item{runtime}{run length}
-
 \item{maxtimestep}{max time step}
+
+\item{runtime}{run length}
 }
 \value{
 thissp.data
