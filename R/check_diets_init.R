@@ -49,7 +49,7 @@ check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atl
   # add to grps df
   grps <- grps %>% dplyr::left_join(biomass_groups)
 
-  scenario.names <- prm.modify[prm.modify$run_no%in%runs.modify,]$run_name
+  scenario.names <- unique(prm.modify[prm.modify$run_no%in%runs.modify,]$run_name)
 
   folder.paths <- paste0(run.dir,"/",scenario.names,"/outputFolder")
 
@@ -69,11 +69,11 @@ check_diets_init <- function(prm.modify, run.dir, runs.modify, fungrouplist, atl
 
 
     # prm of run to look at
-    bio_prm <- readLines(here::here(paste0("data-raw/",prm.name)))
+    bio_prm <- readLines(here::here("data-raw",prm.name))
     # init.nc of run to look at
 
-    init <- tidync::tidync(paste0("data-raw/", init_file))
-    init_nc <- ncdf4::nc_open(paste0("data-raw/",init_file))
+    init <- tidync::tidync(here::here("data-raw", init_file))
+    init_nc <- ncdf4::nc_open(here::here("data-raw", init_file))
 
     # Turn PRM and INIT to data frames  ---------------------------------------
     # turn pprey matrix to a data frame to work with
@@ -287,8 +287,14 @@ for(i in 1:length(fg)){
 
 # apply function
 #purrr::map(verts, purrr::possibly(diet_from_init,NA, run.dir, this.run, pprey_mat))
-lapply(verts, diet_from_init, run.dir, this.run, pprey_mat)
+
+NumberOfCluster <- parallel::detectCores()
+
+mclapply(verts, diet_from_init, run.dir, this.run, pprey_mat, grps, s, amps_sf, v, g, init, init_nc, agemat, verts, mc.cores = NumberOfCluster)
+
+#lapply(verts, diet_from_init, run.dir, this.run, pprey_mat, grps, s, amps_sf, v, g, init, init_nc, agemat, verts)
 # test_verts <- c("DVR","FDF","HAP","MRO","MVR","POP","RAT","SB","SP")
 # purrr::map(test_verts, possibly(diet_from_init,NA))
 }
 }
+

@@ -4,10 +4,13 @@
 \alias{get_nc_fillval}
 \title{Pull the fill value}
 \usage{
-get_nc_fillval(varid)
+get_nc_fillval(varid, init_nc)
 }
 \arguments{
-\item{varid}{}
+\item{varid}{variable names}
+}
+\value{
+fillval_df
 }
 \description{
 Pull the fill value

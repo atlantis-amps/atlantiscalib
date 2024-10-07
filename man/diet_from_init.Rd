@@ -4,7 +4,19 @@
 \alias{diet_from_init}
 \title{Plot diet for predators}
 \usage{
-diet_from_init(predator, run.dir, this.run, pprey_mat)
+diet_from_init(
+  predator,
+  run.dir,
+  this.run,
+  pprey_mat,
+  grps,
+  s,
+  amps_sf,
+  v,
+  g,
+  init,
+  init_nc
+)
 }
 \arguments{
 \item{predator}{}

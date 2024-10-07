@@ -1,12 +1,12 @@
 #' Pull the fill value
 #'
-#' @param varid
+#' @param varid variable names
 #'
-#' @return
+#' @return fillval_df
 #' @export
 #'
 #' @examples
-get_nc_fillval <- function(varid) {
+get_nc_fillval <- function(varid, init_nc) {
   # function that pulls the fillvalue
 
   fillval <- ncdf4::ncatt_get(nc = init_nc, varid = varid, attname = "fill.value")

@@ -14,6 +14,8 @@ knitr::opts_chunk$set(
 )
 options(scipen = 999)
 
+remotes::install_github("r-spatial/sf")
+
 #only packages that are needed as loaded, functions from other packages are called directly as dplyr::filter
 # List of packages for session
 .packages = c("parallel","doSNOW")
@@ -61,6 +63,7 @@ sh.file <- "amps_cal.sh" #name sh file
 startyear <- 2011 #model start year
 this.nc <- "AMPS_2024.nc"
 this.output.nc <- "AMPS_OUT.nc" #name of output nc file
+
 
 #options for diet plots
 atlantis.bgm <- here::here("data-raw","PugetSound_89b_070116.bgm")
@@ -177,10 +180,16 @@ Plot diet comparison
 ```{r plot diet comparison, include=FALSE}
 
 if(rundietcomparison == 1){
+  
   library("rbgm")
-
   check_diets_init(prm.modify, run.dir, runs.modify, fungrouplist, atlantis.bgm, prm.name, init_file=this.nc)
 
 } 
 
 ```
+```{r}
+
+bh_plot(this.nc, nc_file, fg.table=fungrouplist, bio.prm = prm.name)
+
+```
+

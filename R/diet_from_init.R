@@ -6,7 +6,7 @@
 #' @export
 #'
 #' @examples
-diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
+diet_from_init <- function(predator, run.dir, this.run, pprey_mat, grps, s, amps_sf, v, g, init, init_nc, agemat, verts) {
 
   # This function takes a predator and its favorite 5 prey by ontogenetic stage (per PPREY matrix) and makes some plots:
   # Horizontal overlap (as the lowest value between s of predator and prey) - how do we handle stages and seasons?
@@ -75,7 +75,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       dplyr::arrange(desc(pprey)) %>%
       dplyr::filter(pprey > 0) %>%
       dplyr::slice_head(n = 5) %>% # keep only the 5 favorite prey species
-      ungroup()
+      dplyr::ungroup()
 
     fav_prey <- fav_prey_df %>% dplyr::pull(Prey) %>% unique()
 
@@ -122,7 +122,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
                                                     this_s_prey %>% dplyr::filter(species == fav_prey[j]), simplify = FALSE))
           this_s_prey <- this_s_prey %>%
             dplyr::arrange(stage, b, season) %>%
-            dplyr::mutate(new_season = rep(1:length(seasons), length.out = n())) %>%
+            dplyr::mutate(new_season = rep(1:length(seasons), length.out = dplyr::n())) %>%
             dplyr::select(-season) %>%
             dplyr::rename(season = new_season)
 
@@ -240,7 +240,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       dplyr::arrange(desc(pprey)) %>%
       dplyr::filter(pprey > 0) %>%
       dplyr::slice_head(n = 5) %>%
-      ungroup()
+      dplyr::ungroup()
 
     fav_prey <- fav_prey_df %>% dplyr::pull(Prey) %>% unique()
 
@@ -315,6 +315,8 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
   # pull gape size information of the predator
   g_pred <- g %>% dplyr::filter(species == predator)
 
+  print(head(g_pred))
+
   # pull weight-at-age information from initial conditions
   # of the predator
   fg_atts <- grps %>% dplyr::filter(Code==predator)
@@ -332,8 +334,8 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
     dplyr::filter(grepl(predator_name,name)) # filter for specific functional group
 
   # Use pmap with only the variable names
-  resN <- purrr::map(resN_vars$name, get_nc_fillval) %>% bind_rows()
-  strucN <- purrr::map(strucN_vars$name, get_nc_fillval) %>% bind_rows()
+  resN <- purrr::map(resN_vars$name, get_nc_fillval, init_nc) %>% dplyr::bind_rows()
+  strucN <- purrr::map(strucN_vars$name, get_nc_fillval, init_nc) %>% dplyr::bind_rows()
 
   # combine, get total mgN, and convert to g
   weight <- resN %>%
@@ -344,8 +346,8 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   # add upper and lower limit from gape size
   weight_lim <- weight %>%
-    dplyr::mutate(low = weight_g * (g_pred %>% filter(limit == "low") %>% dplyr::pull(g)),
-                  high = weight_g * (g_pred %>% filter(limit == "high") %>% dplyr::pull(g)))
+    dplyr::mutate(low = weight_g * (g_pred %>% dplyr::filter(limit == "low") %>% dplyr::pull(g)),
+                  high = weight_g * (g_pred %>% dplyr::filter(limit == "high") %>% dplyr::pull(g)))
 
   # add stage and species code
   pred_weight <- weight_lim %>%
@@ -368,7 +370,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       dplyr::slice_head(n = 5) %>%
       dplyr::ungroup()
 
-    fav_prey <- fav_prey_df %>% dplyr::select(Prey) %>% distinct()
+    fav_prey <- fav_prey_df %>% dplyr::select(Prey) %>% dplyr::distinct()
 
     if(nrow(fav_prey)==0) {next}
 
@@ -387,8 +389,8 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
       dplyr::filter(grepl(pattern,name)) # filter for specific functional group
 
     # Use pmap with only the variable names
-    resN <- purrr::map(resN_vars$name, get_nc_fillval) %>% dplyr::bind_rows()
-    strucN <- purrr::map(strucN_vars$name, get_nc_fillval) %>% dplyr::bind_rows()
+    resN <- purrr::map(resN_vars$name, get_nc_fillval, init_nc) %>% dplyr::bind_rows()
+    strucN <- purrr::map(strucN_vars$name, get_nc_fillval, init_nc) %>% dplyr::bind_rows()
 
     # combine, get total mgN, and convert to g
     weight <- resN %>%
@@ -434,7 +436,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
           hi <- pred_weight_tmp[l,]$high
 
           ages_eaten <- prey_weight_tmp %>%
-            dplyr::mutate(eaten = ifelse(between(weight_g, lo, hi), 1, 0)) %>%
+            dplyr::mutate(eaten = ifelse(dplyr::between(weight_g, lo, hi), 1, 0)) %>%
             dplyr::filter(eaten > 0) %>%
             dplyr::pull(age)
 
@@ -442,7 +444,7 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
           eaten_tmp <- tidyr::tibble(predator,
                               "stage" = pred_stages[i],
                               "age" = pred_ages[l],
-                              "prey" = fav_prey[j,1] %>% pull(Prey),
+                              "prey" = fav_prey[j,1] %>% dplyr::pull(Prey),
                               "eaten_prey_ages" = list(ages_eaten))
 
           eaten <- rbind(eaten, eaten_tmp)
@@ -457,44 +459,43 @@ diet_from_init <- function(predator, run.dir, this.run, pprey_mat) {
 
   }
 
+  # #make tables
+  # if(nrow(eaten>0)){
+  #
+  #   plot(head(eaten))
+  #   eaten <- eaten %>% dplyr::group_by(predator,stage,age,prey) %>%
+  #     dplyr::summarize(eaten_prey_ages = list(sort(unlist(eaten_prey_ages))))
+  #
+  #   # need to split juvenile table from adult table
+  #
+  #
+  #   for(i in 1:length(pred_stages)){
+  #
+  #     # rearrange and write out a table
+  #     eaten_wide <- eaten %>%
+  #       dplyr::filter(stage == pred_stages[i]) %>%
+  #       tidyr::pivot_wider(id_cols = c(predator,stage,age), names_from = prey, values_from = eaten_prey_ages)
+  #
+  #     # Apply this function to each column of the data frame
+  #     eaten_wide[] <- lapply(eaten_wide, replace_numeric)
+  #
+  #     # sort
+  #     eaten_wide <- eaten_wide %>% dplyr::arrange(age)
+  #
+  #     # Create a kable table
+  #     gape_kable <- eaten_wide %>%
+  #       kableExtra::kbl(caption= paste(predator, "s favorite vertebrate prey items (with age class)'\n")) %>%
+  #       kableExtra::kable_classic(full_width = F, html_font = "Cambria")
+  #
+  #     #save the table as html
+  #
+  #     g_file <- paste(run.dir,"diets_from_init", this.run, predator, paste0("gape_table_", pred_stages[i], ".html"), sep="/")
+  #     kableExtra::save_kable(gape_kable, g_file)
+  #
+  #   }
+  #
+  # }
 
-  eaten <- eaten %>% dplyr::group_by(predator,stage,age,prey) %>%
-    dplyr::summarize(eaten_prey_ages = list(sort(unlist(eaten_prey_ages))))
-
-  # need to split juvenile table from adult table
-  # Function to replace numeric(0) with NA
-  replace_numeric0_with_NA <- function(x) {
-    if(is.list(x)) {
-      lapply(x, function(y) if(length(y) == 0) "" else y)
-    } else {
-      x
-    }
-  }
-
-  for(i in 1:length(pred_stages)){
-
-    # rearrange and write out a table
-    eaten_wide <- eaten %>%
-      dplyr::filter(stage == pred_stages[i]) %>%
-      tidyr::pivot_wider(id_cols = c(predator,stage,age), names_from = prey, values_from = eaten_prey_ages)
-
-    # Apply this function to each column of the data frame
-    eaten_wide[] <- lapply(eaten_wide, replace_numeric0_with_NA)
-
-    # sort
-    eaten_wide <- eaten_wide %>% arrange(age)
-
-    # Create a kable table
-    gape_kable <- eaten_wide %>%
-      kableExtra::kbl(caption= paste(predator, "s favorite vertebrate prey items (with age class)'\n")) %>%
-      kableExtra::kable_classic(full_width = F, html_font = "Cambria")
-
-    #save the table as html
-
-    g_file <- paste(run.dir,"diets_from_init", this.run, predator, paste0("gape_table_", pred_stages[i], ".html"), sep="/")
-    kableExtra::save_kable(gape_kable, g_file)
-
-  }
 
 
   ##########################################################################################

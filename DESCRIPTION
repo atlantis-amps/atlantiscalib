@@ -8,7 +8,7 @@ Description: Package to modify the biology prm, manage runs and plot output for 
 License: MIT license
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Imports: 
     data.table,
     doSNOW,
@@ -19,6 +19,8 @@ Imports:
     ggplot2,
     ggh4x,
     googlesheets4,
+    grid,
+    gridExtra,
     here,
     kableExtra,
     pals,
@@ -27,6 +29,7 @@ Imports:
     qpdf,
     maps,
     mapdata,
+    ncdf4,
     RColorBrewer,
     readr,
     reshape2,
@@ -34,6 +37,7 @@ Imports:
     sf,
     stringi,
     stringr,
+    terra,
     tibble,
     tidync,
     tidyr,
