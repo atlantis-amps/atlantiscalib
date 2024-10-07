@@ -1,6 +1,6 @@
 bh_plot <- function(nc_path, nc_file, fg.table, bio.prm){
 
-nc_file <- ncdf4::nc_open(here:here("data-raw",this.nc))
+nc_file <- ncdf4::nc_open(here::here("data-raw",this.nc))
 names(fg.table)[1] <- "species"
 
 
@@ -8,7 +8,7 @@ names(fg.table)[1] <- "species"
 # For simplicity, it plots BH relationship for all fish, BUT fish can use other reproduction types
 # Fish using other method have alpha = 99 --> selection done before plotting
 #Species list
-species_list <- fg.table$Name[fg.table$GroupType=="FISH"]
+species_list <- fg.table$name[fg.table$GroupType=="FISH"]
 # Max age list
 age_list <- fg.table$NumCohorts[fg.table$GroupType=="FISH"]
 # Code list
@@ -17,7 +17,7 @@ code_list <- fg.table$species[fg.table$GroupType=="FISH"]
 
 # Maturity age
 
-bio.lines <- readLines(bio.prm)
+bio.lines <- readLines(here::here("data-raw",bio.prm))
 pattern = paste0('_age_mat')
 bio.lines.id = grep(pattern,bio.lines)
 mat_data = bio.lines[bio.lines.id]
@@ -90,8 +90,6 @@ stock_range <- seq(0, 1e7, length.out = 100)  # Ajuster l'intervalle et le nombr
 
 # Les données alpha et beta en provenance du prm file
 
-bio.lines <- readLines(bio.prm)
-bio.lines = bio.lines
 pattern = paste0('BHalpha_')
 bio.lines.id = grep(pattern,bio.lines)
 alpha_data = bio.lines[bio.lines.id]
@@ -105,16 +103,6 @@ pattern = paste0('_age_mat')
 bio.lines.id = grep(pattern,bio.lines)
 mat_data = bio.lines[bio.lines.id]
 
-
-
-# extract species names and param value
-extract_values <- function(data) {
-  species <- sapply(data, function(x) strsplit(x, "   ")[[1]][1])
-  values <- sapply(data, function(x) as.numeric(strsplit(x, "   ")[[1]][2]))
-  species <- sapply(species, function(x) strsplit(x, "_")[[1]][2])
-
-  return(data.frame(species = species, values = values))
-}
 
 # Extract beta and alpha
 alpha_df <- extract_values(alpha_data)
@@ -134,6 +122,7 @@ for (i in 1:nrow(df)) {
   species <- df$species[i]
   alpha <- df$values_alpha[i]
   beta <- df$values_beta[i]
+  dim(total_biomass_list)
   total <- total_biomass_list[names(total_biomass_list)==df$Name[i]][[1]]
 
   stock_range <- seq(0, 3*total, length.out = 100)

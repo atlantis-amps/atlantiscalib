@@ -76,6 +76,7 @@ runcomparebiomass <- 1 #compare biomass plots
 runguildbiomass <- 1 #guild biomass plots
 rundietplots <- 1 #diet plots showing diet composition across run
 rundietcomparison <- 0 #diet comparison plots
+plotbhcurves  <- 1 #plot Beverton Holt curves
 
 ```
 
@@ -189,7 +190,11 @@ if(rundietcomparison == 1){
 ```
 ```{r}
 
-bh_plot(this.nc, nc_file, fg.table=fungrouplist, bio.prm = prm.name)
+if(plotbhcurves ==1){
+
+  bh_plot(this.nc, nc_file, fg.table=fungrouplist, bio.prm = prm.name)
+  
+}
 
 ```
 
