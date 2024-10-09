@@ -188,7 +188,7 @@ bh_plot <- function(this.nc, fg.table, bio.prm, prm.modify, runs.modify, run.dir
 
   globalplotname <- "bh_curve_global.pdf"
 
-  ggplot2::ggsave(globalplotname, plot = global.plot, device ="pdf", path = this.path, width = 24, height = 26, units = "cm")
+  #ggplot2::ggsave(globalplotname, plot = global.plot, device ="pdf", path = this.path, width = 24, height = 26, units = "cm")
 
 
   curve_data <- c()
@@ -238,9 +238,9 @@ bh_plot <- function(this.nc, fg.table, bio.prm, prm.modify, runs.modify, run.dir
       ggplot2::scale_x_continuous(labels = scales::scientific)
 
 
-    globalplotname <- paste0("bh_curve_sp_",i,".pdf")
+    spplotname <- paste0("bh_curve_sp_",i,".pdf")
 
-   # ggplot2::ggsave(globalplotname, plot = sp.plot, device ="pdf", path = this.path, width = 21, height = 29, units = "cm")
+    ggplot2::ggsave(spplotname, plot = sp.plot, device ="pdf", path = this.path, width = 21, height = 29, units = "cm")
 
 
   }
