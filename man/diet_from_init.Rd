@@ -15,7 +15,9 @@ diet_from_init(
   v,
   g,
   init,
-  init_nc
+  init_nc,
+  agemat,
+  verts
 )
 }
 \arguments{

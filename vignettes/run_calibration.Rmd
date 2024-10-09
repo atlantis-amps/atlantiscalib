@@ -7,14 +7,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r load options, include=}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 options(scipen = 999)
 
-remotes::install_github("r-spatial/sf")
+#use this if installing sf from CRAN returns an error
+#remotes::install_github("r-spatial/sf")
 
 #only packages that are needed as loaded, functions from other packages are called directly as dplyr::filter
 # List of packages for session
@@ -32,6 +33,7 @@ system("sudo sh ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
 ```
 
 Check these entries before running, specifies runs, paths and plots to generate
+Note all plots are saved in the /outputFolder
 ```{r set run, include=FALSE}
 
 flagnoclusters = 0 #flag to run on multiple cores, 1 to run on all cores except one, 0 to run on all cores, can help access Rstudio while Atlantis runs are going
@@ -41,7 +43,7 @@ flagnoclusters = 0 #flag to run on multiple cores, 1 to run on all cores except 
 sheet.name = "calibration_log_example"
 
 #runs that will be modified, based on run_no in the spreadsheet
-runs.modify <- 1:8
+runs.modify <- 1:2
 
 #specify email used to access the Google sheet
 myemail <- "hmorzarialuna@gmail.com"#"myemail@gmail.com"
@@ -188,12 +190,12 @@ if(rundietcomparison == 1){
 } 
 
 ```
+
 ```{r}
 
 if(plotbhcurves ==1){
 
-  bh_plot(this.nc, nc_file, fg.table=fungrouplist, bio.prm = prm.name)
-  
+   bh_plot(this.nc, fg.table=fungrouplist, bio.prm = prm.name, prm.modify, runs.modify, run.dir)
 }
 
 ```
