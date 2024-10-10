@@ -26,9 +26,9 @@ lapply(.packages, require, character.only=TRUE)
 
 
 devtools::load_all()
-#install needed dependencies
-system("sudo chmod + ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
-system("sudo sh ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
+#install needed dependencies, run once
+#system("sudo chmod + ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
+#system("sudo sh ~/atlantiscalib/data-raw/ubuntulibraries.sh", wait = TRUE)
 
 ```
 
@@ -40,20 +40,20 @@ flagnoclusters = 0 #flag to run on multiple cores, 1 to run on all cores except 
 
 #Check before running
 #Name of sheet used in Google sheet calibration log
-sheet.name = "calibration_log_example"
+sheet.name = "calibration_log_HML"
 
 #runs that will be modified, based on run_no in the spreadsheet
-runs.modify <- 1:2
+runs.modify <- 2:3
 
 #specify email used to access the Google sheet
 myemail <- "hmorzarialuna@gmail.com"#"myemail@gmail.com"
 
-#directory with base run
-#base.dir <- "/home/atlantis/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2"
+#path with base run
+base.path <- "/nfsdata/ampscalibration"
 #directory where to store runs
 run.dir <- "/nfsdata/ampscalibration"
 #name of biology prm
-prm.name <- "AMPSbioparam_mv1_2024_V4.prm"
+prm.name <- "AMPSbioparam_mv1_2024_V6.prm"
 #name of functional group file
 fungrouplist <- readr::read_csv("~/atlantiscalib/data-raw/PugetSoundAtlantisFunctionalGroups_2024.csv")
 #name of guild group file
@@ -122,7 +122,7 @@ Creates run directories based on Google sheet runs, modifies the biology PRM fil
 
 ```{r read prm changes, include=FALSE}
 
-lapply(runs.modify, modify_prm, sheet.id, sheet.name, run.dir, prm.modify, prm.name, atlantis.run)
+lapply(runs.modify, modify_prm, sheet.id, sheet.name, run.dir, prm.modify, prm.name, atlantis.run, base.path)
 
 
 ```
@@ -191,12 +191,20 @@ if(rundietcomparison == 1){
 
 ```
 
-```{r}
+```{r BH curves, include=FALSE}
 
 if(plotbhcurves ==1){
 
    bh_plot(this.nc, fg.table=fungrouplist, bio.prm = prm.name, prm.modify, runs.modify, run.dir)
 }
+
+```
+
+```{r compare files}
+old.file <- "~/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2/AMPSbioparam_mv1_2024_V6-1.prm"
+new.file <- "~/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2/AMPSbioparam_mv1_2024_V6.prm"
+
+diffr::diffr(old.file, new.file)
 
 ```
 

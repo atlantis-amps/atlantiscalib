@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-modify_prm <- function(eachrun, sheet.id, sheet.name, run.dir, prm.modify, prm.name, atlantis.run){
+modify_prm <- function(eachrun, sheet.id, sheet.name, run.dir, prm.modify, prm.name, atlantis.run, base.path){
 
   print(eachrun)
 #run that will be created
@@ -27,7 +27,8 @@ dir.modify <- row.modify %>%
   paste0(run.dir,"/",.)
 
 base.dir <- row.modify %>%
-  dplyr::distinct(based_on_run)
+  dplyr::distinct(based_on_run) %>%
+  dplyr::pull(based_on_run)
 
 print(paste("Creating run",dir.modify))
 
@@ -38,7 +39,7 @@ if(!dir.exists(dir.modify)){
 
   #copy basedir but not subdirectories
   # cp dir1/* dir2
-  system(paste0("cp ", here::here(base.dir),"/* ", here::here(dir.modify)), wait = TRUE)
+  system(paste0("cp ", paste0(base.path,"/",base.dir),"/* ", dir.modify), wait = TRUE)
 
 }
 
