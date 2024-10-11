@@ -137,7 +137,7 @@ get_nc_data <- function(eachgroup, thisncfile, fungrouplist, prm.modify, maxtime
     dplyr::bind_rows() %>%
     dplyr::mutate(code = this.sprow$Code, longname = this.sprow$longname) %>%
     dplyr::rename(atlantis_group = group) %>%
-    dplyr::mutate(Year=(time)/365)
+    dplyr::mutate(Year=(time*outputfrequency)/365)
 
 
   print(paste("Done with group",eachgroup))
