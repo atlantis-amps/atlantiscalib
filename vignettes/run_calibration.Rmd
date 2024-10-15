@@ -53,7 +53,7 @@ base.path <- "/nfsdata/ampscalibration"
 #directory where to store runs
 run.dir <- "/nfsdata/ampscalibration"
 #name of biology prm
-prm.name <- "AMPSbioparam_mv1_2024_V6.prm"
+prm.name <- "AMPSbioparam_mv1_2024_V7.prm"
 #name of functional group file
 fungrouplist <- readr::read_csv("~/atlantiscalib/data-raw/PugetSoundAtlantisFunctionalGroups_2024.csv")
 #name of guild group file
