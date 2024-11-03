@@ -40,10 +40,10 @@ flagnoclusters = 0 #flag to run on multiple cores, 1 to run on all cores except 
 
 #Check before running
 #Name of sheet used in Google sheet calibration log
-sheet.name = "calibration_log_HML"
+sheet.name = "calibration_log_example"
 
 #runs that will be modified, based on run_no in the spreadsheet
-runs.modify <- 2:3
+runs.modify <- 1:2
 
 #specify email used to access the Google sheet
 myemail <- "hmorzarialuna@gmail.com"#"myemail@gmail.com"
@@ -118,7 +118,7 @@ prm.modify <- googlesheets4::read_sheet(sheet.id, sheet = sheet.name)
 
 ## Modify input files
 
-Creates run directories based on Google sheet runs, modifies the biology PRM file and run file to update run time based on the Google sheet prm.modify
+Creates run directories based on Google sheet runs, modifies the biology PRM file and run file to update run time based on the Google sheet prm.modify. Will also modify pprey
 
 ```{r read prm changes, include=FALSE}
 
@@ -201,8 +201,14 @@ if(plotbhcurves ==1){
 ```
 
 ```{r compare files}
-old.file <- "~/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2/AMPSbioparam_mv1_2024_V6-1.prm"
-new.file <- "~/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2/AMPSbioparam_mv1_2024_V6.prm"
+old.file <- "/nfsdata/ampscalibration/Run_mv1_v6718_73d_1/AMPSbioparam_mv1_2024_V7.prm"
+new.file <- "/nfsdata/ampscalibration/Run_mv1_v6718_146d_3/AMPSbioparam_mv1_2024_V7.prm"
+
+diffr::diffr(old.file, new.file)
+
+
+old.file <- "~/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2/AMPSbioparam_mv1_2024_V6.prm"
+new.file <- "~/psatlantismodel/Atlantis_mv1_base_2024_5yrs_V2/AMPSbioparam_mv1_2024_V7.prm"
 
 diffr::diffr(old.file, new.file)
 

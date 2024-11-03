@@ -151,8 +151,15 @@ this.num.line <- this.vec.line %>%
 
 } # end vector
 
+if(eachrow$pred_mod==1 | eachrow$prey_mod==1) {
+
+  "modifying pprey"
+  biology.prm <- modify_pprey(eachrow, biology.prm)
+}
+
 #write modified biology prm file
 writeLines(biology.prm, con = paste0(dir.modify,"/",prm.name))
+
 
 }
 }

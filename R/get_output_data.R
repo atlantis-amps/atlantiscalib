@@ -14,7 +14,6 @@
 #' @examples
 get_output_data <- function(prm.modify, runs.modify, run.dir, run.time, fungrouplist, this.output.nc){
 
-  data(fungrouplist)
   scenario.names <- unique(prm.modify[prm.modify$run_no%in%runs.modify,]$run_name)
 
   folder.paths <- paste0(run.dir,"/",scenario.names,"/outputFolder")
