@@ -45,8 +45,8 @@ modify_pprey <- function(eachrow, biology.prm){
 
 
     pprey.names.invert <- pprey.names.all %>%
-      dplyr::filter(!str_detect(preystage, ("pPREY1"))) %>%
-      dplyr::filter(!str_detect(preystage, ("pPREY2"))) %>%
+      dplyr::filter(!stringr::str_detect(preystage, ("pPREY1"))) %>%
+      dplyr::filter(!stringr::str_detect(preystage, ("pPREY2"))) %>%
       dplyr::mutate(pred = gsub("pPREY","",preystage), ppredstage = pred, preystage=1, predstage = 1, ppreystage = "pPREY") %>%
       dplyr::select(pprey_name, entries, ppreystage, ppredstage, preystage, predstage, pred)
 
@@ -57,7 +57,7 @@ modify_pprey <- function(eachrow, biology.prm){
       tibble::as_tibble() %>%
       tidyr::separate(value,into=pprey.cols, sep=" ") %>%
       dplyr::filter(!BB=="") %>%
-      dplyr::filter(!str_detect(BB, ("pPREY"))) %>%
+      dplyr::filter(!stringr::str_detect(BB, ("pPREY"))) %>%
       dplyr::mutate_at(dplyr::vars(BB:DC_s), as.numeric) %>%
       dplyr::bind_cols(pprey.names, .) %>%
       dplyr::mutate(index = 1:nrow(.)) %>%
@@ -70,9 +70,12 @@ modify_pprey <- function(eachrow, biology.prm){
       tibble::as_tibble() %>%
       tidyr::separate(value,into=pprey.cols, sep=" ") %>%
       dplyr::filter(!BB=="") %>%
-      dplyr::filter(!str_detect(BB, ("pPREY"))) %>%
+      dplyr::filter(!stringr::str_detect(BB, ("pPREY"))) %>%
       dplyr::mutate_at(dplyr::vars(BB:DC_s), as.numeric) %>%
-      dplyr::mutate_if(is.numeric, ~0 * (. > 0))
+      dplyr::mutate_if(is.numeric, ~0 * (. > 0)) %>%
+      dplyr::bind_cols(pprey.names, .) %>%
+      dplyr::mutate(index = 1:nrow(.)) %>%
+      dplyr::select(index, everything())
 
     readr::write_csv(pprey.template,here::here("data-raw","pprey_template.csv"))
 
